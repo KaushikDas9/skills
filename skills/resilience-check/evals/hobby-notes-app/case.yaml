@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: hobby-notes-app
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  The report rates the app Low risk and runs only the Low set of checks
+  (timeouts, retries, bad input, crash and restart, visible errors). It finds
+  the missing timeout on the quote call and the bare except that hides errors.
+  It does not ask for circuit breakers, bulkheads, failover, or other heavy
+  machinery for a hobby app. The report is short.

@@ -1,0 +1,11 @@
+schema_version: "1.1"
+name: shop-api-many-gaps
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  The report rates the app High risk (payments). It finds the planted problems:
+  no timeout on the payment and email calls, no error handling around the Redis
+  read, no idempotency key on order creation (double charge), an empty catch that
+  hides email errors, and the cache that is not cleared when the price changes.
+  Each problem has file and line, a real-life example and a technology example,
+  and a small fix. The source file is not changed.
