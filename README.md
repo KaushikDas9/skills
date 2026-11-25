@@ -19,7 +19,11 @@ npx skills add KaushikDas9/skills@<skill-name>
 Example:
 
 ```
+# for this project only
 npx skills add KaushikDas9/skills@resilience-check
+
+# for all your projects
+npx skills add KaushikDas9/skills@resilience-check -g
 ```
 
 Or copy one skill folder into one of these places:

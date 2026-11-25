@@ -28,7 +28,11 @@ The skill picks a risk level (Low, Standard, High) from what the app does. A hob
 With one command:
 
 ```
+# for this project only
 npx skills add KaushikDas9/skills@resilience-check
+
+# for all your projects
+npx skills add KaushikDas9/skills@resilience-check -g
 ```
 
 Or copy this folder (`skills/resilience-check`) into one of these places:
