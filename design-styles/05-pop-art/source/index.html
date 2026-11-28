@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Lantern Bean - Pop Art</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Bangers";
+        src: url("assets/Bangers-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-display: block;
+      }
+      :root {
+        --paper: #fff4dc;
+        --yellow: #ffd31a;
+        --red: #e62e2d;
+        --blue: #1e5bc6;
+        --ink: #111111;
+        --white: #ffffff;
+        --cyan: #4fb3e8;
+        --font-display: "Bangers", sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      .scene {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+      .dots {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+      .center {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* Hard black offset shadow plus an outline built from eight 9px offsets. No blur anywhere. */
+      .inked {
+        text-shadow:
+          9px 0 0 var(--ink), -9px 0 0 var(--ink), 0 9px 0 var(--ink), 0 -9px 0 var(--ink),
+          6px 6px 0 var(--ink), -6px -6px 0 var(--ink), 6px -6px 0 var(--ink), -6px 6px 0 var(--ink),
+          18px 18px 0 var(--ink);
+      }
+      #burst {
+        position: absolute;
+        left: 260px;
+        top: -160px;
+        width: 1400px;
+        height: 1400px;
+        filter: drop-shadow(16px 16px 0 var(--ink));
+      }
+      #burst svg { width: 1400px; height: 1400px; display: block; }
+      #hero {
+        font-size: 210px;
+        line-height: 0.95;
+        text-align: center;
+        color: var(--red);
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+      }
+      #cupWrap {
+        position: absolute;
+        left: 300px;
+        top: 170px;
+        width: 760px;
+        height: 620px;
+      }
+      #cupWrap svg { width: 760px; height: 620px; display: block; filter: drop-shadow(16px 16px 0 var(--ink)); }
+      #caption {
+        position: absolute;
+        left: 1040px;
+        top: 330px;
+        width: 820px;
+        white-space: nowrap;
+        background: var(--white);
+        border: 10px solid var(--ink);
+        box-shadow: 16px 16px 0 var(--ink);
+        padding: 30px 40px 26px;
+        font-size: 112px;
+        line-height: 0.92;
+        color: var(--ink);
+      }
+      #caption .line2 { display: block; }
+      #line1, #line2 {
+        display: block;
+        font-size: 236px;
+        line-height: 0.92;
+        color: var(--white);
+        white-space: nowrap;
+      }
+      #heroBlock {
+        position: absolute;
+        left: 0;
+        top: 120px;
+        width: 1920px;
+        text-align: center;
+      }
+      #nameBox {
+        position: absolute;
+        left: 560px;
+        top: 720px;
+        width: 800px;
+        height: 200px;
+        background: var(--yellow);
+        border: 12px solid var(--ink);
+        box-shadow: 18px 18px 0 var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 150px;
+        line-height: 1;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #label {
+        position: absolute;
+        left: 56px;
+        top: 48px;
+        background: var(--ink);
+        color: var(--white);
+        font-size: 58px;
+        line-height: 1;
+        padding: 14px 28px 12px;
+        box-shadow: 10px 10px 0 var(--red);
+        white-space: nowrap;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Scene 1: 0.0 - 1.6 s, shop name -->
+      <section id="s1" class="scene clip" data-start="0" data-duration="1.6" data-track-index="0" style="background: var(--yellow);">
+        <svg id="dots1" class="dots" viewBox="0 0 1920 1080" preserveAspectRatio="none"></svg>
+        <div id="burst"><svg id="burstSvg" viewBox="-700 -700 1400 1400"></svg></div>
+        <div class="center"><div id="hero" class="inked">Lantern<br />Bean</div></div>
+      </section>
+
+      <!-- Scene 2: 1.6 - 3.4 s, cup and line -->
+      <section id="s2" class="scene clip" data-start="1.6" data-duration="1.8" data-track-index="0" style="background: var(--cyan);">
+        <svg id="dots2" class="dots" viewBox="0 0 1920 1080" preserveAspectRatio="none"></svg>
+        <div id="cupWrap">
+          <svg id="cupSvg" viewBox="-360 -350 720 620">
+            <defs>
+              <clipPath id="cupClip">
+                <path d="M -175 -160 L 175 -160 L 135 120 Q 0 175 -135 120 Z" />
+              </clipPath>
+            </defs>
+            <!-- saucer -->
+            <ellipse cx="0" cy="210" rx="250" ry="52" fill="#FFD31A" stroke="#111" stroke-width="12" />
+            <!-- handle: ink outline first, red core on top -->
+            <path d="M 165 -110 C 300 -120 330 10 230 60 C 205 72 185 70 165 60" fill="none" stroke="#111" stroke-width="60" stroke-linecap="round" />
+            <path d="M 165 -110 C 300 -120 330 10 230 60 C 205 72 185 70 165 60" fill="none" stroke="#E62E2D" stroke-width="32" stroke-linecap="round" />
+            <!-- body -->
+            <path d="M -175 -160 L 175 -160 L 135 120 Q 0 175 -135 120 Z" fill="#E62E2D" stroke="#111" stroke-width="12" stroke-linejoin="round" />
+            <g clip-path="url(#cupClip)">
+              <rect x="-200" y="-40" width="400" height="36" fill="#FFD31A" stroke="#111" stroke-width="8" />
+              <g id="cupDots" fill="#111"></g>
+              <rect x="-128" y="-120" width="26" height="190" rx="13" fill="#FFFFFF" stroke="#111" stroke-width="8" />
+            </g>
+            <!-- rim and coffee -->
+            <ellipse cx="0" cy="-160" rx="175" ry="40" fill="#FFFFFF" stroke="#111" stroke-width="12" />
+            <ellipse cx="0" cy="-160" rx="150" ry="26" fill="#111" />
+            <!-- steam -->
+            <g id="steam" fill="none" stroke="#111" stroke-width="16" stroke-linecap="round">
+              <path d="M -70 -215 C -100 -250 -40 -270 -70 -310" />
+              <path d="M 0 -225 C -30 -265 30 -285 0 -330" />
+              <path d="M 70 -215 C 40 -250 100 -270 70 -310" />
+            </g>
+          </svg>
+        </div>
+        <div id="caption"><span class="line1">Fresh coffee,</span><span class="line2">every morning</span></div>
+      </section>
+
+      <!-- Scene 3: 3.4 - 5.0 s, closing line and name -->
+      <section id="s3" class="scene clip" data-start="3.4" data-duration="1.6" data-track-index="0" style="background: var(--red);">
+        <svg id="dots3" class="dots" viewBox="0 0 1920 1080" preserveAspectRatio="none"></svg>
+        <div id="heroBlock" class="inked">
+          <span id="line1">Come in,</span>
+          <span id="line2">warm up.</span>
+        </div>
+        <div id="nameBox">Lantern Bean</div>
+      </section>
+
+      <!-- Style label, whole video -->
+      <div id="label" class="clip" data-start="0" data-duration="5" data-track-index="1">Pop Art</div>
+    </div>
+
+    <script>
+      // Deterministic halftone helpers: hex grid of ink dots, radius from a tone function.
+      function dotGrid(x0, y0, x1, y1, pitch, rf) {
+        let out = "";
+        const rowH = pitch * 0.866;
+        const rows = Math.ceil((y1 - y0) / rowH) + 1;
+        const cols = Math.ceil((x1 - x0) / pitch) + 2;
+        for (let r = 0; r <= rows; r++) {
+          const y = y0 + r * rowH;
+          for (let c = 0; c <= cols; c++) {
+            const x = x0 + c * pitch + (r % 2 ? pitch / 2 : 0);
+            if (x < x0 - 1 || x > x1 + 1) continue;
+            const rad = rf(x, y);
+            if (rad > 0.9) out += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad.toFixed(2)}"/>`;
+          }
+        }
+        return out;
+      }
+      const clamp01 = (v) => Math.max(0, Math.min(1, v));
+
+      // Scene 1: red dots, largest near the centre, fading to the edges.
+      document.getElementById("dots1").innerHTML = `<g fill="#E62E2D">${dotGrid(0, 0, 1920, 1080, 24, (x, y) => {
+        const d = Math.hypot(x - 960, (y - 540) * 1.25);
+        return 11 * clamp01(1 - d / 1250);
+      })}</g>`;
+
+      // Scene 1: white starburst with ink outline (drawn as a flat shape).
+      (function () {
+        const spikes = 26, rOut = 540, rIn = 390;
+        let pts = [];
+        for (let i = 0; i < spikes * 2; i++) {
+          const a = (Math.PI * i) / spikes - Math.PI / 2;
+          const r = i % 2 === 0 ? rOut : rIn;
+          pts.push(`${(Math.cos(a) * r).toFixed(1)},${(Math.sin(a) * r).toFixed(1)}`);
+        }
+        document.getElementById("burstSvg").innerHTML =
+          `<polygon points="${pts.join(" ")}" fill="#FFFFFF" stroke="#111111" stroke-width="16" stroke-linejoin="round"/>`;
+      })();
+
+      // Scene 2: blue dots, denser toward the bottom-right.
+      document.getElementById("dots2").innerHTML = `<g fill="#1E5BC6">${dotGrid(0, 0, 1920, 1080, 24, (x, y) => {
+        return 2 + 7 * clamp01((x + y) / 3000);
+      })}</g>`;
+
+      // Cup body shading: ink dots that grow toward the right side of the cup.
+      document.getElementById("cupDots").innerHTML = dotGrid(-180, -170, 180, 130, 12, (x, y) => {
+        return 6 * clamp01((x + 175) / 350) * (y > -150 ? 1 : 0);
+      });
+
+      // Scene 3: yellow dots, larger toward the bottom.
+      document.getElementById("dots3").innerHTML = `<g fill="#FFD31A">${dotGrid(0, 0, 1920, 1080, 24, (x, y) => {
+        return 3 + 8 * clamp01(y / 1080);
+      })}</g>`;
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1 (0.0 - 1.6)
+      tl.fromTo("#burst", { rotation: -50, scale: 0.2 }, { rotation: 0, scale: 1, duration: 0.5, ease: "back.out(1.7)" }, 0);
+      tl.fromTo("#hero", { scale: 0.35, rotation: -14, opacity: 0 }, { scale: 1, rotation: -4, opacity: 1, duration: 0.42, ease: "back.out(2)" }, 0.05);
+      tl.to("#hero", { scale: 1.03, duration: 0.6, ease: "none" }, 1.0);
+
+      // Scene 2 (1.6 - 3.4)
+      tl.fromTo("#cupWrap", { y: -60, rotation: -9, opacity: 0 }, { y: 0, rotation: 0, opacity: 1, duration: 0.45, ease: "back.out(1.6)" }, 1.62);
+      tl.fromTo("#steam", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, 2.0);
+      tl.fromTo("#caption", { x: 120, opacity: 0, rotation: 4 }, { x: 0, opacity: 1, rotation: -2, duration: 0.4, ease: "back.out(1.8)" }, 2.1);
+
+      // Scene 3 (3.4 - 5.0): line one and two pop in, name box lands by 4.4 s.
+      tl.fromTo("#line1", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2)" }, 3.42);
+      tl.fromTo("#line2", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2)" }, 3.62);
+      tl.fromTo("#nameBox", { y: 60, opacity: 0, rotation: -3 }, { y: 0, opacity: 1, rotation: 0, duration: 0.4, ease: "back.out(1.8)" }, 4.0);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

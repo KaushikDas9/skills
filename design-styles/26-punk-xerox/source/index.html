@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Anton";
+        src: url("assets/fonts/anton-latin-400-normal.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+      }
+      :root {
+        --paper: #f1eee4;
+        --ink: #121012;
+        --pink: #ff3e9a;
+        --yellow: #ffe21a;
+        --green: #7be86a;
+        --font-display: "Anton", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      .abs {
+        position: absolute;
+      }
+      /* photocopy grain over everything */
+      #grain {
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.5;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.07  0 0 0 0 0.06  0 0 0 0 0.07  0 0 0 0.9 -0.25'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>");
+      }
+      /* halftone dot screen */
+      .dots {
+        background-image: radial-gradient(circle at center, rgba(18, 16, 18, 0.9) 0 2.8px, rgba(18, 16, 18, 0) 3.4px);
+        background-size: 20px 20px;
+      }
+      #corner {
+        left: 0;
+        bottom: 0;
+        width: 560px;
+        height: 340px;
+        -webkit-mask-image: radial-gradient(ellipse at 0% 100%, #000 35%, transparent 75%);
+        mask-image: radial-gradient(ellipse at 0% 100%, #000 35%, transparent 75%);
+        opacity: 0.55;
+      }
+      #band {
+        left: -80px;
+        top: 230px;
+        width: 2080px;
+        height: 540px;
+        background: var(--pink);
+      }
+      #panel {
+        left: 960px;
+        top: 0;
+        width: 960px;
+        height: 1080px;
+        background: var(--pink);
+        overflow: hidden;
+      }
+      #dots {
+        left: -600px;
+        top: -600px;
+        width: 2160px;
+        height: 2280px;
+        opacity: 0.38;
+      }
+      /* cut-out letter tiles */
+      .tile {
+        display: inline-block;
+        font-family: var(--font-display);
+        line-height: 1;
+        padding: 0.05em 0.07em 0.03em;
+        color: var(--ink);
+        background: var(--paper);
+        white-space: nowrap;
+      }
+      .tile.y { background: var(--yellow); }
+      .tile.g { background: var(--green); }
+      .tile.w { background: var(--paper); }
+      .tile.k { background: var(--ink); color: var(--paper); }
+      .tile.sp { background: transparent; padding: 0; width: 0.32em; }
+      #hero-a,
+      #hero-b {
+        left: 0;
+        width: 1920px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 262px;
+      }
+      #hero-a { top: 150px; }
+      #hero-b { top: 440px; }
+      #hero-a .tile,
+      #hero-b .tile {
+        margin: 0 4px;
+      }
+      #tape {
+        left: 92px;
+        top: 262px;
+        width: 840px;
+        padding: 40px 44px 36px;
+        background: var(--yellow);
+        font-size: 128px;
+        line-height: 0.98;
+        color: var(--ink);
+      }
+      #tape::before,
+      #tape::after {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 42px;
+        background: rgba(241, 238, 228, 0.6);
+      }
+      #tape::before {
+        left: -30px;
+        top: -18px;
+        transform: rotate(-24deg);
+      }
+      #tape::after {
+        right: -14px;
+        bottom: -16px;
+        transform: rotate(-30deg);
+      }
+      #name {
+        left: 110px;
+        top: 640px;
+        font-size: 110px;
+        display: flex;
+        align-items: center;
+      }
+      #name .tile {
+        line-height: 1.22;
+        padding: 0.1em 0.08em 0.14em;
+      }
+      #name .tile.sp {
+        padding: 0;
+      }
+      #cup {
+        left: 1060px;
+        top: 150px;
+        width: 740px;
+        height: 740px;
+      }
+      #cup svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        overflow: visible;
+      }
+      #label {
+        right: 64px;
+        top: 56px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 40px;
+        letter-spacing: 0.06em;
+        padding: 12px 24px 8px;
+        line-height: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="corner" class="abs clip dots" data-start="0" data-duration="5" data-track-index="0"></div>
+
+      <div id="band" class="abs" data-layout-allow-overflow></div>
+
+      <div id="panel" class="abs" data-layout-allow-overflow>
+        <div id="dots" class="abs dots" data-layout-allow-overflow></div>
+      </div>
+
+      <div id="tape" class="abs">Fresh coffee, every morning</div>
+
+      <div id="name" class="abs">
+        <span class="tile y" data-rot="-3">L</span><span class="tile w" data-rot="2">a</span><span class="tile k" data-rot="-2">n</span><span class="tile g" data-rot="3">t</span><span class="tile w" data-rot="-2">e</span><span class="tile y" data-rot="2">r</span><span class="tile g" data-rot="-3">n</span><span class="tile sp"></span><span class="tile k" data-rot="2">B</span><span class="tile w" data-rot="-2">e</span><span class="tile y" data-rot="3">a</span><span class="tile g" data-rot="-2">n</span>
+      </div>
+
+      <div id="cup" class="abs">
+        <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+          <!-- steam above the mouth -->
+          <path class="steam" pathLength="1" d="M225 220 C205 190 245 165 225 130 C208 100 240 88 228 60" fill="none" stroke="#121012" stroke-width="17" stroke-linecap="round" stroke-dasharray="1 2" stroke-dashoffset="1" />
+          <path class="steam" pathLength="1" d="M300 214 C280 180 320 150 300 115 C283 85 315 70 302 40" fill="none" stroke="#121012" stroke-width="17" stroke-linecap="round" stroke-dasharray="1 2" stroke-dashoffset="1" />
+          <path class="steam" pathLength="1" d="M375 220 C355 190 395 165 375 130 C358 100 390 88 378 60" fill="none" stroke="#121012" stroke-width="17" stroke-linecap="round" stroke-dasharray="1 2" stroke-dashoffset="1" />
+          <!-- saucer, centred under the cup -->
+          <g id="cup-saucer">
+            <ellipse cx="300" cy="482" rx="252" ry="42" fill="#121012" stroke="#f1eee4" stroke-width="10" />
+            <ellipse cx="300" cy="478" rx="150" ry="20" fill="none" stroke="#f1eee4" stroke-width="6" opacity="0.8" />
+          </g>
+          <!-- handle, a ring whose left side sits inside the body -->
+          <g id="cup-handle">
+            <circle cx="452" cy="340" r="56" fill="none" stroke="#121012" stroke-width="30" />
+          </g>
+          <!-- body with rim, label band and highlight -->
+          <g id="cup-body">
+            <defs>
+              <clipPath id="cup-clip">
+                <path d="M150 258 L450 258 C450 396 426 462 300 466 C174 462 150 396 150 258 Z" />
+              </clipPath>
+            </defs>
+            <path d="M150 258 L450 258 C450 396 426 462 300 466 C174 462 150 396 150 258 Z" fill="#121012" stroke="#f1eee4" stroke-width="8" stroke-linejoin="round" />
+            <g clip-path="url(#cup-clip)">
+              <rect x="120" y="326" width="360" height="38" fill="#f1eee4" />
+              <path d="M186 292 C192 340 196 390 214 430" fill="none" stroke="#f1eee4" stroke-width="12" stroke-linecap="round" opacity="0.9" />
+            </g>
+            <rect x="136" y="236" width="328" height="34" rx="17" fill="#121012" stroke="#f1eee4" stroke-width="6" />
+          </g>
+        </svg>
+      </div>
+
+      <div id="hero-a" class="abs" data-layout-allow-overflow>
+        <span class="tile w" data-rot="-3">L</span><span class="tile y" data-rot="2">a</span><span class="tile k" data-rot="-2">n</span><span class="tile g" data-rot="3">t</span><span class="tile w" data-rot="-2">e</span><span class="tile y" data-rot="2">r</span><span class="tile g" data-rot="-3">n</span>
+      </div>
+      <div id="hero-b" class="abs" data-layout-allow-overflow>
+        <span class="tile k" data-rot="2">B</span><span class="tile w" data-rot="-3">e</span><span class="tile y" data-rot="3">a</span><span class="tile g" data-rot="-2">n</span>
+      </div>
+
+      <div id="label" class="abs">Punk Xerox</div>
+
+      <div id="grain" class="abs clip" data-start="0" data-duration="5" data-track-index="9"></div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // initial state: band, hero tiles and corner dots are visible at 0 s
+      gsap.set("#band", { rotation: -3 });
+      gsap.set("#tape", { rotation: -2 });
+
+      // scene 1 (0.0 - 1.8 s): hero, cut-out letters slam into place
+      const heroTiles = gsap.utils.toArray("#hero-a .tile, #hero-b .tile");
+      heroTiles.forEach((el, i) => {
+        const r = parseFloat(el.dataset.rot || "0");
+        tl.fromTo(
+          el,
+          { y: -70, rotation: r - 14 },
+          { y: 0, rotation: r, duration: 0.42, ease: "back.out(1.8)" },
+          0.03 * i,
+        );
+      });
+
+      // scene 1 exit
+      heroTiles.forEach((el, i) => {
+        tl.to(el, { y: 1000, duration: 0.42, ease: "power2.in" }, 1.22 + 0.02 * i);
+      });
+      tl.fromTo("#band", { y: 0 }, { y: -1000, duration: 0.5, ease: "power3.in" }, 1.42);
+
+      // panel slams in from the right (pink, halftone)
+      tl.fromTo("#panel", { x: 960 }, { x: 0, duration: 0.5, ease: "power4.out" }, 1.6);
+      tl.fromTo("#dots", { rotation: 45 }, { rotation: 15, duration: 3.2, ease: "sine.inOut" }, 1.8);
+
+      // scene 2 (1.8 - 5.0 s): tagline tape, name, cup; all in place by 2.8 s
+      tl.fromTo(
+        "#tape",
+        { x: -120, rotation: -9, opacity: 0 },
+        { x: 0, rotation: -2, opacity: 1, duration: 0.5, ease: "back.out(1.5)" },
+        1.95,
+      );
+
+      const nameTiles = gsap.utils.toArray("#name .tile");
+      nameTiles.forEach((el, i) => {
+        if (el.classList.contains("sp")) return;
+        const r = parseFloat(el.dataset.rot || "0");
+        tl.fromTo(
+          el,
+          { y: 40, rotation: r - 8, opacity: 0 },
+          { y: 0, rotation: r, opacity: 1, duration: 0.3, ease: "back.out(2)" },
+          2.1 + 0.03 * i,
+        );
+      });
+
+      tl.fromTo("#cup-saucer", { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.0);
+      tl.fromTo("#cup-body", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" }, 2.05);
+      tl.fromTo("#cup-handle", { x: 34, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 2.25);
+      tl.fromTo(
+        ".steam",
+        { strokeDashoffset: 1, opacity: 1 },
+        { strokeDashoffset: 0, duration: 0.5, stagger: 0.12, ease: "power1.out" },
+        2.3,
+      );
+
+      // hold (2.8 - 5.0 s): gentle movement only
+      tl.to(".steam", { y: -8, duration: 0.55, yoyo: true, repeat: 2, ease: "sine.inOut", stagger: 0.15 }, 2.9);
+      tl.to("#cup", { y: -10, duration: 1.0, yoyo: true, repeat: 1, ease: "sine.inOut" }, 2.8);
+      tl.to("#tape", { rotation: -1, duration: 1.0, yoyo: true, repeat: 1, ease: "sine.inOut" }, 2.9);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

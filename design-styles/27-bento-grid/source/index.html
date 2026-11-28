@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "InterLocal";
+        src: url("assets/inter-latin-500-normal.woff2") format("woff2");
+        font-weight: 500;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "InterLocal";
+        src: url("assets/inter-latin-600-normal.woff2") format("woff2");
+        font-weight: 600;
+        font-style: normal;
+      }
+      :root {
+        --bg: #000000;
+        --card: #161618;
+        --card-2: #0f0f11;
+        --line: rgba(255, 255, 255, 0.07);
+        --ink: #f5f5f7;
+        --ink-2: #86868b;
+        --radius: 32px;
+        --pad: 40px;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        font-family: "InterLocal", sans-serif;
+        color: var(--ink);
+        overflow: hidden;
+      }
+      .box {
+        position: absolute;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      /* Grid: 4 columns, 417px cells, 20px gaps, origin 96,120 */
+      #b-name {
+        left: 96px;
+        top: 120px;
+        width: 1728px;
+        height: 800px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-start;
+        padding: var(--pad);
+      }
+      #name {
+        font-weight: 600;
+        font-size: 240px;
+        transform-origin: 0% 100%;
+        line-height: 1;
+        letter-spacing: -0.045em;
+        white-space: nowrap;
+        color: var(--ink);
+      }
+      #b-shape {
+        left: 533px;
+        top: 120px;
+        width: 417px;
+        height: 390px;
+        background: var(--card-2);
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #b-cup {
+        left: 970px;
+        top: 120px;
+        width: 854px;
+        height: 800px;
+        background: var(--card);
+        opacity: 0;
+      }
+      #b-line {
+        left: 96px;
+        top: 530px;
+        width: 854px;
+        height: 390px;
+        display: flex;
+        align-items: flex-end;
+        padding: var(--pad);
+        opacity: 0;
+      }
+      #line {
+        font-weight: 600;
+        font-size: 72px;
+        line-height: 1.04;
+        letter-spacing: -0.04em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #label {
+        position: absolute;
+        left: 96px;
+        top: 968px;
+        font-family: "InterLocal", sans-serif;
+        font-weight: 500;
+        font-size: 28px;
+        letter-spacing: -0.01em;
+        color: var(--ink-2);
+      }
+      .ln {
+        display: block;
+      }
+      svg {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+      <!-- Bento cell 1: name (hero at start, small cell after 1.8 s) -->
+      <div id="b-name" class="box clip" data-start="0" data-duration="5" data-track-index="0">
+        <h1 id="name">Lantern Bean</h1>
+      </div>
+
+      <!-- Bento cell 2: shape only -->
+      <div id="b-shape" class="box clip" data-start="0" data-duration="5" data-track-index="1">
+        <svg width="260" height="260" viewBox="0 0 260 260" aria-hidden="true">
+          <defs>
+            <linearGradient id="g-accent" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#FF8A1F" />
+              <stop offset="0.5" stop-color="#FF2D6F" />
+              <stop offset="1" stop-color="#A63DFF" />
+            </linearGradient>
+          </defs>
+          <g id="ring">
+            <circle cx="130" cy="130" r="100" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="22" />
+            <circle
+              cx="130"
+              cy="130"
+              r="100"
+              fill="none"
+              stroke="url(#g-accent)"
+              stroke-width="22"
+              stroke-linecap="round"
+              stroke-dasharray="330 630"
+              transform="rotate(-90 130 130)"
+            />
+          </g>
+          <circle cx="130" cy="130" r="26" fill="url(#g-accent)" />
+        </svg>
+      </div>
+
+      <!-- Bento cell 3: large cup cell -->
+      <div id="b-cup" class="box clip" data-start="0" data-duration="5" data-track-index="2">
+        <svg width="854" height="800" viewBox="110.5 77.5 633 593" aria-label="Coffee cup">
+          <defs>
+            <linearGradient id="g-rim" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#FF8A1F" />
+              <stop offset="0.5" stop-color="#FF2D6F" />
+              <stop offset="1" stop-color="#A63DFF" />
+            </linearGradient>
+            <linearGradient id="g-body" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FFFFFF" />
+              <stop offset="1" stop-color="#D9D9DE" />
+            </linearGradient>
+          </defs>
+          <!-- saucer -->
+          <ellipse cx="427" cy="586" rx="232" ry="34" fill="#0a0a0c" opacity="0.6" />
+          <ellipse cx="427" cy="574" rx="222" ry="30" fill="#F5F5F7" />
+          <ellipse cx="427" cy="570" rx="150" ry="16" fill="#E4E4E8" />
+          <!-- handle, joined into the body -->
+          <path d="M546 372 C 640 344, 668 476, 532 496" fill="none" stroke="#F5F5F7" stroke-width="30" stroke-linecap="round" />
+          <!-- body -->
+          <path d="M296 330 H558 L541 528 Q537 562 503 562 H351 Q317 562 313 528 Z" fill="url(#g-body)" />
+          <!-- accent band -->
+          <rect x="318" y="430" width="218" height="12" fill="url(#g-rim)" />
+          <!-- coffee surface at the mouth -->
+          <ellipse cx="427" cy="330" rx="131" ry="24" fill="#2a1a12" />
+          <ellipse cx="427" cy="330" rx="118" ry="16" fill="#4a2d1d" />
+          <!-- steam above the mouth -->
+          <g id="steam" fill="none" stroke="#86868B" stroke-width="9" stroke-linecap="round" opacity="0.75">
+            <path d="M378 280 C 356 236, 400 208, 378 158" />
+            <path d="M427 270 C 405 218, 449 188, 427 128" />
+            <path d="M476 280 C 454 236, 498 208, 476 158" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Bento cell 4: the line -->
+      <div id="b-line" class="box clip" data-start="0" data-duration="5" data-track-index="3">
+        <h2 id="line"><span class="ln">Fresh coffee,</span><span class="ln">every morning</span></h2>
+      </div>
+
+      <div id="label" class="clip" data-start="0" data-duration="5" data-track-index="4">Bento Grid</div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // 0.0 - 1.8 s: the name is the hero across the whole grid
+      tl.fromTo("#name", { y: 26 }, { y: 0, duration: 0.6, ease: "power3.out" }, 0);
+
+      // 1.8 - 2.6 s: name cell settles into the top-left cell, cup and line cells arrive
+      tl.to("#b-name", { width: 417, height: 390, duration: 0.7, ease: "power3.inOut" }, 1.8);
+      tl.to("#name", { scale: 44 / 240, duration: 0.7, ease: "power3.inOut" }, 1.8);
+      tl.to("#b-cup", { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.9);
+      tl.to("#b-shape", { opacity: 1, duration: 0.4, ease: "power2.out" }, 2.1);
+      tl.to("#b-line", { opacity: 1, duration: 0.4, ease: "power2.out" }, 2.3);
+      tl.fromTo("#line", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.3);
+
+      // Shape cell: slow rotation of the ring after it appears
+      tl.to("#ring", { rotation: 90, duration: 2.9, ease: "none", svgOrigin: "130 130" }, 2.1);
+
+      // 2.8 - 5.0 s: gentle style movement only
+      tl.to("#steam", { y: -10, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+      tl.to("#b-cup svg", { y: -6, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

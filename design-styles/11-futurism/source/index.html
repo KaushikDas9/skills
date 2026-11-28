@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Lantern Bean - Futurism</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Archivo Variable";
+        src: url(assets/fonts/archivo-latin-wdth-normal.woff2) format("woff2-variations");
+        font-weight: 100 900;
+        font-stretch: 62% 125%;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Space Mono Local";
+        src: url(assets/fonts/space-mono-latin-400-normal.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: block;
+      }
+      :root {
+        --paper: #ede5d3;
+        --ink: #16130f;
+        --orange: #f2501c;
+        --cobalt: #1f3fd0;
+        --silver: #b9bdc3;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #cobalt {
+        position: absolute;
+        inset: 0;
+        background: var(--cobalt);
+        clip-path: polygon(0 58%, 62% 100%, 0 100%);
+      }
+      #label {
+        position: absolute;
+        left: 72px;
+        top: 64px;
+        font-family: "Space Mono Local", monospace;
+        font-size: 28px;
+        letter-spacing: 0.16em;
+        color: var(--ink);
+        z-index: 50;
+      }
+      #stage {
+        position: absolute;
+        inset: 0;
+      }
+      .abs {
+        position: absolute;
+        left: 0;
+        top: 0;
+        white-space: nowrap;
+        font-family: "Archivo Variable", sans-serif;
+        color: var(--ink);
+        line-height: 1;
+      }
+      .hero {
+        width: 1920px;
+        top: 400px;
+        text-align: center;
+        font-size: 280px;
+        font-weight: 900;
+        font-variation-settings: "wdth" 62;
+      }
+      .line {
+        left: 900px;
+        font-size: 124px;
+        font-weight: 800;
+        font-variation-settings: "wdth" 62;
+      }
+      #lineA {
+        top: 300px;
+      }
+      #lineB {
+        top: 430px;
+      }
+      .name {
+        left: 900px;
+        top: 690px;
+        font-size: 72px;
+        font-weight: 900;
+        font-variation-settings: "wdth" 62;
+        letter-spacing: 0.02em;
+      }
+      #rule {
+        position: absolute;
+        left: 900px;
+        top: 650px;
+        width: 360px;
+        height: 14px;
+        background: var(--orange);
+        opacity: 0;
+      }
+      #cupWrap {
+        position: absolute;
+        left: 150px;
+        top: 230px;
+        width: 620px;
+        height: 620px;
+      }
+      #cupWrap svg {
+        display: block;
+        overflow: visible;
+      }
+      .wedge {
+        position: absolute;
+        left: 0;
+        height: 12px;
+        background: var(--orange);
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+        opacity: 0;
+      }
+      .wedge.rev {
+        clip-path: polygon(100% 0, 0 50%, 100% 100%);
+      }
+      /* echoes: the object in orange, behind the live one */
+      .echo {
+        color: #ea4d1b; /* orange, a step darker so the faded trail still passes contrast */
+      }
+      .echo-cup * {
+        fill: var(--orange) !important;
+        stroke: var(--orange) !important;
+      }
+      .echo-cup {
+        position: absolute;
+        left: 150px;
+        top: 230px;
+        width: 620px;
+        height: 620px;
+      }
+      .echo-cup svg {
+        display: block;
+        overflow: visible;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+      <div id="cobalt"></div>
+      <div id="label">Futurism</div>
+
+      <div id="stage">
+        <div class="wedge" id="wEntry0"></div>
+        <div class="wedge" id="wEntry1"></div>
+        <div class="wedge rev" id="wExit0"></div>
+        <div class="wedge rev" id="wExit1"></div>
+
+        <div class="abs hero" id="hero">Lantern Bean</div>
+
+        <div id="cupWrap">
+          <svg viewBox="0 0 620 620" width="620" height="620" aria-hidden="true">
+            <ellipse cx="310" cy="524" rx="290" ry="44" fill="#16130f" />
+            <path d="M478 250 C612 220 630 430 456 428" fill="none" stroke="#16130f" stroke-width="34" stroke-linecap="round" />
+            <path d="M120 170 L500 170 L462 470 Q458 500 428 508 L192 508 Q162 500 158 470 Z" fill="#b9bdc3" stroke="#16130f" stroke-width="10" stroke-linejoin="round" />
+            <path d="M141 300 L479 300 L474 362 L146 362 Z" fill="#f2501c" />
+            <ellipse cx="310" cy="170" rx="190" ry="34" fill="#16130f" stroke="#16130f" stroke-width="10" />
+            <g id="steam" fill="none" stroke="#f2501c" stroke-width="14" stroke-linecap="round">
+              <path id="st0" d="M220 130 C196 100 244 76 220 40" />
+              <path id="st1" d="M310 124 C286 90 334 64 310 24" />
+              <path id="st2" d="M400 130 C376 100 424 76 400 40" />
+            </g>
+          </svg>
+        </div>
+
+        <div class="abs line" id="lineA">Fresh coffee,</div>
+        <div class="abs line" id="lineB">every morning</div>
+        <div id="rule"></div>
+        <div class="abs name" id="name">Lantern Bean</div>
+      </div>
+    </div>
+
+    <script>
+      const FPS = 30;
+      const N = 150;
+      const DT = 2 / FPS; // echo spacing: 2 frames behind
+      const ECHO_BASE = 0.6;
+      const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+      const p2io = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2);
+      // uniform deceleration from distance d at t0 over dur (velocity line is straight)
+      const brake = (t, t0, dur, d) => {
+        const u = clamp((t - t0) / dur, 0, 1);
+        return d * (1 - u) * (1 - u);
+      };
+      // width follows speed (px per frame): 62 at rest, 125 at full speed
+      const wdthFor = (v) => 62 + 63 * Math.pow(clamp(v / 70, 0, 1), 0.8);
+
+      // ---- trajectories (pure functions of time) ----
+      const heroX = (t) => {
+        if (t < 1.0) return -1150 * (1 - p2io(clamp(t, 0, 1)));
+        if (t < 1.35) return 0;
+        const u = clamp((t - 1.35) / 0.45, 0, 1);
+        return -2000 * u * u;
+      };
+      const heroVis = (t) => (t < 1.8 ? 1 : 0);
+
+      const cupX = (t) => (t < 1.8 ? 1100 : brake(t, 1.8, 1.0, 1100));
+      const cupVis = (t) => (t >= 1.8 ? 1 : 0);
+
+      const lineX = (t0, dur, d) => (t) => (t < t0 ? d : brake(t, t0, dur, d));
+      const lineVis = (t0) => (t) => (t >= t0 ? 1 : 0);
+      const lineAX = lineX(2.0, 0.8, 700);
+      const lineBX = lineX(2.1, 0.7, 700);
+      const nameX = lineX(2.2, 0.6, 520);
+
+      const vel = (fn, t) => Math.abs(fn(t) - fn(t - 1 / FPS));
+
+      const $ = (id) => document.getElementById(id);
+      const tl = gsap.timeline({ paused: true });
+
+      // ---- echo clones: object k is drawn where it was k*DT ago ----
+      function makeClones(main, k, extraClass) {
+        const list = [];
+        const cs = getComputedStyle(main);
+        for (let i = 1; i <= k; i++) {
+          const c = main.cloneNode(true);
+          c.removeAttribute("id");
+          c.querySelectorAll("[id]").forEach((n) => n.removeAttribute("id"));
+          // ids carry the position rules, so copy the resolved box onto each clone
+          c.style.left = cs.left;
+          c.style.top = cs.top;
+          c.classList.add("echo");
+          c.setAttribute("data-layout-ignore", "");
+          c.setAttribute("aria-hidden", "true");
+          if (extraClass) c.classList.add(extraClass);
+          main.parentNode.insertBefore(c, main);
+          list.push({ el: c, k: i });
+        }
+        return list;
+      }
+
+      const textObjs = [
+        { main: $("hero"), x: heroX, vis: heroVis, text: true, K: 6, thr: 8, wght: 900, settle: 1.8, gate: 1.0 },
+        { main: $("lineA"), x: lineAX, vis: lineVis(2.0), text: true, K: 3, thr: 10, wght: 800, settle: 2.8, gate: 2.5 },
+        { main: $("lineB"), x: lineBX, vis: lineVis(2.1), text: true, K: 3, thr: 10, wght: 800, settle: 2.8, gate: 2.5 },
+        { main: $("name"), x: nameX, vis: lineVis(2.2), text: true, K: 2, thr: 10, wght: 900, settle: 2.8, gate: 2.5 },
+      ];
+      const cupObj = { main: $("cupWrap"), x: cupX, vis: cupVis, text: false, K: 4, thr: 8, settle: 2.8, gate: 2.5 };
+      const objs = [...textObjs, cupObj];
+      objs.forEach((o) => {
+        o.clones = makeClones(o.main, o.K, o.text ? null : "echo-cup");
+      });
+
+      const setEcho = (o, t, mainX, mainWd) => {
+        o.clones.forEach(({ el, k }) => {
+          const tk = t - k * DT;
+          const xk = o.x(tk);
+          const wdk = o.text ? wdthFor(vel(o.x, tk)) : 62;
+          const mv = clamp((Math.abs(xk - mainX) + 3 * Math.abs(wdk - mainWd)) / o.thr, 0, 1);
+          // once the object has settled, its past is the object itself: no echo
+          // trails belong to the entrance only: each object's echoes fade out before its gate time
+          const gateFade = clamp((o.gate - t) / 0.2, 0, 1);
+          const op = (tk >= o.settle ? 0 : o.vis(tk) * Math.pow(ECHO_BASE, k) * mv) * gateFade;
+          const props = { x: xk, opacity: op };
+          if (o.text) props.fontVariationSettings = `"wdth" ${wdk.toFixed(2)}, "wght" ${o.wght}`;
+          tl.set(el, props, t);
+        });
+      };
+
+      // ---- frame-by-frame state, every value a pure function of t ----
+      for (let f = 0; f < N; f++) {
+        const t = f / FPS;
+
+        // hero + line + name
+        textObjs.forEach((o) => {
+          const x = o.x(t);
+          const wd = wdthFor(vel(o.x, t));
+          const props = { x, opacity: o.vis(t) };
+          if (o.text) props.fontVariationSettings = `"wdth" ${wd.toFixed(2)}, "wght" ${o.wght}`;
+          tl.set(o.main, props, t);
+          setEcho(o, t, x, wd);
+        });
+
+        // cup, with a gentle float once it has landed
+        const cx = cupX(t);
+        const hold = Math.max(0, t - 2.8);
+        const landed = t >= 2.8 ? 1 : 0;
+        const cupProps = {
+          x: cx,
+          y: landed ? 6 * Math.sin((2 * Math.PI * hold) / 3.2) : 0,
+          rotation: landed ? 1.0 * Math.sin((2 * Math.PI * hold) / 4.0) : 0,
+          opacity: cupVis(t),
+        };
+        tl.set(cupObj.main, cupProps, t);
+        setEcho(cupObj, t, cx, 62);
+
+        // steam drifts while the cup is held
+        ["st0", "st1", "st2"].forEach((id, i) => {
+          tl.set("#" + id, { y: 5 * Math.sin((2 * Math.PI * t) / 1.5 + i * 2.1) }, t);
+        });
+
+        // rule appears when the cup has landed
+        tl.set("#rule", { opacity: landed }, t);
+
+        // force lines: behind the hero, tips pointing at it, length from speed
+        const hx = heroX(t);
+        const v = vel(heroX, t);
+        const L = clamp(9 * (v - 4), 0, 640);
+        const op = clamp((v - 4) / 8, 0, 1) * 0.9;
+        const entry = t < 1.35 ? 1 : 0;
+        const exit = 0; // speed wedges on the way out are removed: trails on entrance only
+        const tipIn = 960 + hx - 300;
+        const tipOut = 960 + hx + 300;
+        tl.set("#wEntry0", { x: tipIn - L, width: L, top: 372, opacity: op * entry }, t);
+        tl.set("#wEntry1", { x: tipIn - L * 0.7, width: L * 0.7, top: 668, opacity: op * entry * 0.8 }, t);
+        tl.set("#wExit0", { x: tipOut, width: L, top: 372, opacity: op * exit }, t);
+        tl.set("#wExit1", { x: tipOut, width: L * 0.7, top: 668, opacity: op * exit * 0.8 }, t);
+      }
+
+      // hold the timeline to the root length (5 s)
+      tl.set({}, {}, 5);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

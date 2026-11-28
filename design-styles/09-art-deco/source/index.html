@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Lantern Bean - Art Deco</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Poiret One";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/poiret-one-latin-400-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Jost";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/jost-latin-400-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Jost";
+        font-style: normal;
+        font-weight: 500;
+        font-display: block;
+        src: url("assets/jost-latin-500-normal.woff2") format("woff2");
+      }
+
+      :root {
+        --onyx: #0e0d0b;
+        --onyx-2: #1a1711;
+        --gold: #c9a45a;
+        --gold-lt: #f2dc9c;
+        --gold-dk: #7e5e26;
+        --ivory: #f1e7d2;
+        --emerald: #0e4a3c;
+        --smoke: #a89f8c;
+        --gold-material: linear-gradient(
+          135deg,
+          #f2dc9c 0%,
+          #c9a45a 22%,
+          #7e5e26 40%,
+          #f2dc9c 60%,
+          #c9a45a 80%,
+          #7e5e26 100%
+        );
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0e0d0b;
+      }
+
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: radial-gradient(ellipse 70% 60% at 50% 55%, #1a1711 0%, #0e0d0b 70%);
+      }
+
+      /* Sunburst and frame sit on the axis (x = 960) */
+      #art {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+
+      /* Hero name: starts centred, then shrinks and rises to a header */
+      #hero {
+        position: absolute;
+        left: 0;
+        top: 400px;
+        width: 1920px;
+        height: 280px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+      }
+      #hero .name {
+        font-family: "Poiret One", "Jost", sans-serif;
+        font-weight: 400;
+        font-size: 214px;
+        line-height: 1;
+        letter-spacing: 0.06em;
+        color: var(--gold);
+        display: inline-block;
+      }
+      .letter {
+        display: inline-block;
+        background-image: var(--gold-material);
+        background-size: 300% 100%;
+        background-position: 0% 50%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+      .letter.space {
+        width: 0.32em;
+      }
+
+      /* Line + name block */
+      #line {
+        position: absolute;
+        left: 0;
+        top: 826px;
+        width: 1920px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        font-family: "Jost", sans-serif;
+        font-weight: 500;
+        font-size: 60px;
+        letter-spacing: 0.04em;
+        color: var(--ivory);
+      }
+      #line .ch {
+        display: inline-block;
+      }
+      #line .ch.space {
+        width: 0.28em;
+      }
+
+      #label {
+        position: absolute;
+        right: 120px;
+        bottom: 104px;
+        font-family: "Jost", sans-serif;
+        font-weight: 400;
+        font-size: 28px;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: var(--smoke);
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="scene">
+        <svg id="art" data-layout-allow-overflow viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f2dc9c" />
+              <stop offset="0.22" stop-color="#c9a45a" />
+              <stop offset="0.4" stop-color="#7e5e26" />
+              <stop offset="0.6" stop-color="#f2dc9c" />
+              <stop offset="0.8" stop-color="#c9a45a" />
+              <stop offset="1" stop-color="#7e5e26" />
+            </linearGradient>
+          </defs>
+          <g id="rays"></g>
+          <g id="frame"></g>
+          <g id="cupWrap" transform="translate(960 700) scale(1.12) translate(-960 -700)">
+            <g id="saucer"></g>
+            <g id="cup">
+              <g id="handle"></g>
+              <g id="body"></g>
+              <g id="steam"></g>
+            </g>
+          </g>
+          <g id="divider"></g>
+        </svg>
+
+        <div id="hero"><span class="name" id="name"></span></div>
+        <div id="line" aria-label="Fresh coffee, every morning"></div>
+        <div id="label">Art Deco</div>
+      </div>
+    </div>
+
+    <script>
+      const NS = "http://www.w3.org/2000/svg";
+      const AX = 960;
+      const GOLD = "url(#goldLine)";
+      const GOLD_FLAT = "#c9a45a";
+      const EMER = "#0e4a3c";
+
+      function el(tag, attrs, parent) {
+        const n = document.createElementNS(NS, tag);
+        for (const k in attrs) n.setAttribute(k, attrs[k]);
+        if (parent) parent.appendChild(n);
+        return n;
+      }
+
+      // Stepped (two-step) rectangle path, corners cut in steps, never rounded
+      function steppedRect(x0, y0, x1, y1, s) {
+        return [
+          `M${x0},${y0 + 2 * s}`,
+          `L${x0 + s},${y0 + 2 * s}`,
+          `L${x0 + s},${y0 + s}`,
+          `L${x0 + 2 * s},${y0 + s}`,
+          `L${x0 + 2 * s},${y0}`,
+          `L${x1 - 2 * s},${y0}`,
+          `L${x1 - 2 * s},${y0 + s}`,
+          `L${x1 - s},${y0 + s}`,
+          `L${x1 - s},${y0 + 2 * s}`,
+          `L${x1},${y0 + 2 * s}`,
+          `L${x1},${y1 - 2 * s}`,
+          `L${x1 - s},${y1 - 2 * s}`,
+          `L${x1 - s},${y1 - s}`,
+          `L${x1 - 2 * s},${y1 - s}`,
+          `L${x1 - 2 * s},${y1}`,
+          `L${x0 + 2 * s},${y1}`,
+          `L${x0 + 2 * s},${y1 - s}`,
+          `L${x0 + s},${y1 - s}`,
+          `L${x0 + s},${y1 - 2 * s}`,
+          `L${x0},${y1 - 2 * s}`,
+          "Z",
+        ].join(" ");
+      }
+
+      // ---- Sunburst: 22 rays across the upper half, behind the cup, mirrored on the axis
+      (function buildRays() {
+        const g = document.getElementById("rays");
+        const cx = AX;
+        const cy = 640;
+        const R = 1400;
+        const N = 22;
+        const angles = [];
+        const e = 0.035;
+        for (let i = 0; i <= N; i++) angles.push(Math.PI + e + (i * (Math.PI - 2 * e)) / N);
+        // filled wedges on every other gap
+        for (let i = 0; i < N; i++) {
+          if (i % 2 !== 0) continue;
+          const a0 = angles[i];
+          const a1 = angles[i + 1];
+          const d = `M${cx},${cy} L${(cx + R * Math.cos(a0)).toFixed(1)},${(cy + R * Math.sin(a0)).toFixed(1)} L${(cx + R * Math.cos(a1)).toFixed(1)},${(cy + R * Math.sin(a1)).toFixed(1)} Z`;
+          el("path", { d, fill: GOLD_FLAT, "fill-opacity": 0.07, stroke: "none" }, g);
+        }
+        angles.forEach((a) => {
+          el(
+            "line",
+            {
+              x1: cx,
+              y1: cy,
+              x2: (cx + R * Math.cos(a)).toFixed(1),
+              y2: (cy + R * Math.sin(a)).toFixed(1),
+              stroke: GOLD_FLAT,
+              "stroke-width": 1,
+              "stroke-opacity": 0.32,
+            },
+            g
+          );
+        });
+      })();
+
+      // ---- Frame: one thick, two thin, parallel (stepped corners)
+      (function buildFrame() {
+        const g = document.getElementById("frame");
+        const lines = [
+          { inset: 40, w: 4 },
+          { inset: 40 + 12 + 2, w: 1.6 },
+          { inset: 40 + 12 + 2 + 12, w: 1.6 },
+        ];
+        lines.forEach((ln) => {
+          el(
+            "path",
+            {
+              d: steppedRect(ln.inset, ln.inset, 1920 - ln.inset, 1080 - ln.inset, 18),
+              fill: "none",
+              stroke: GOLD,
+              "stroke-width": ln.w,
+              "stroke-linejoin": "miter",
+            },
+            g
+          );
+        });
+      })();
+
+      // ---- Cup (drawn in SVG coordinates; cup body centred on the axis)
+      (function buildCup() {
+        // Handle first, so the body covers its inner end (attached to the body)
+        const handle = document.getElementById("handle");
+        const hd = "M1118,506 C1208,468 1240,530 1234,558 C1228,588 1200,602 1112,598";
+        el("path", { d: hd, fill: "none", stroke: GOLD, "stroke-width": 26, "stroke-linecap": "butt" }, handle);
+        el("path", { d: hd, fill: "none", stroke: EMER, "stroke-width": 12, "stroke-linecap": "butt" }, handle);
+
+        // Body: tapered bowl with a flat-chamfered foot
+        const body = document.getElementById("body");
+        const bodyD =
+          "M790,470 L806,600 Q812,650 862,650 L1058,650 Q1108,650 1114,600 L1130,470 Z";
+        el("path", { d: bodyD, fill: EMER, stroke: GOLD, "stroke-width": 1.8, "stroke-linejoin": "miter" }, body);
+
+        // Triple band (one thick, two thin) across the body, then a chevron band
+        const halfW = (y) => 170 - (y - 470) * (36 / 170);
+        const band = (y, w) => {
+          const hw = halfW(y) - 6;
+          el("line", { x1: AX - hw, y1: y, x2: AX + hw, y2: y, stroke: GOLD, "stroke-width": w }, body);
+        };
+        band(520, 1.6);
+        band(532, 4);
+        band(544, 1.6);
+        // chevrons
+        let zz = "";
+        const xs = [-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150];
+        xs.forEach((dx, i) => {
+          const y = i % 2 === 0 ? 584 : 598;
+          zz += `${i === 0 ? "M" : "L"}${AX + dx},${y} `;
+        });
+        el("path", { d: zz.trim(), fill: "none", stroke: GOLD, "stroke-width": 1.6, "stroke-linejoin": "miter" }, body);
+
+        // Mouth: coffee surface with gold rim
+        el("ellipse", { cx: AX, cy: 470, rx: 170, ry: 34, fill: "#1a1711", stroke: GOLD, "stroke-width": 1.8 }, body);
+        el("ellipse", { cx: AX, cy: 470, rx: 146, ry: 24, fill: "none", stroke: GOLD, "stroke-width": 1.6 }, body);
+
+        // Steam: three gold S-curves rising from the mouth
+        const steam = document.getElementById("steam");
+        el("path", { d: "M902,412 C888,392 916,378 902,360 C888,342 916,328 902,310", fill: "none", stroke: GOLD, "stroke-width": 2.4, "stroke-linecap": "round", class: "steam" }, steam);
+        el("path", { d: "M958,406 C944,386 972,372 958,354 C944,336 972,322 958,304", fill: "none", stroke: GOLD, "stroke-width": 2.4, "stroke-linecap": "round", class: "steam" }, steam);
+        el("path", { d: "M1014,412 C1000,392 1028,378 1014,360 C1000,342 1028,328 1014,310", fill: "none", stroke: GOLD, "stroke-width": 2.4, "stroke-linecap": "round", class: "steam" }, steam);
+      })();
+
+      // ---- Saucer: centred under the cup, stepped rim
+      (function buildSaucer() {
+        const g = document.getElementById("saucer");
+        el("path", { d: "M670,650 Q670,716 960,720 Q1250,716 1250,650 Z", fill: EMER, stroke: GOLD, "stroke-width": 1.8 }, g);
+        el("ellipse", { cx: AX, cy: 650, rx: 290, ry: 44, fill: EMER, stroke: GOLD, "stroke-width": 1.8 }, g);
+        el("ellipse", { cx: AX, cy: 650, rx: 236, ry: 32, fill: "none", stroke: GOLD, "stroke-width": 1.2 }, g);
+      })();
+
+      // ---- Divider: diamond on the axis with mirrored rules
+      (function buildDivider() {
+        const g = document.getElementById("divider");
+        el("path", { d: "M960,752 L970,764 L960,776 L950,764 Z", fill: GOLD_FLAT }, g);
+        el("line", { x1: 540, y1: 764, x2: 930, y2: 764, stroke: GOLD_FLAT, "stroke-width": 1.2 }, g);
+        el("line", { x1: 990, y1: 764, x2: 1380, y2: 764, stroke: GOLD_FLAT, "stroke-width": 1.2 }, g);
+      })();
+
+      // ---- Text: split letters so they can grow from the axis
+      const nameEl = document.getElementById("name");
+      const nameChars = [...'Lantern Bean'];
+      nameChars.forEach((c) => {
+        const s = document.createElement("span");
+        s.className = c === " " ? "letter space" : "letter";
+        s.textContent = c === " " ? " " : c;
+        nameEl.appendChild(s);
+      });
+      const lineEl = document.getElementById("line");
+      [...'Fresh coffee, every morning'].forEach((c) => {
+        const s = document.createElement("span");
+        s.className = c === " " ? "ch space" : "ch";
+        s.textContent = c === " " ? " " : c;
+        lineEl.appendChild(s);
+      });
+
+      const letters = [...nameEl.querySelectorAll(".letter")];
+      // Earlier letters paint above later ones so no glyph hook is hidden under the next box
+      letters.forEach((l, i) => { l.style.position = "relative"; l.style.zIndex = String(100 - i); });
+      const lineChars = [...lineEl.querySelectorAll(".ch")];
+      const mid = (letters.length - 1) / 2;
+      const midL = (lineChars.length - 1) / 2;
+
+      // ---- Timeline (5.0 s)
+      const tl = gsap.timeline({ paused: true });
+
+      // Frame opens from the axis, overshooting slightly
+      tl.fromTo(
+        "#frame",
+        { scaleX: 0.3, svgOrigin: "960 540" },
+        { scaleX: 1, duration: 0.9, ease: "back.out(1.2)", svgOrigin: "960 540" },
+        0
+      );
+
+      // Sunburst fades and widens from behind the axis
+      tl.fromTo(
+        "#rays",
+        { opacity: 0, scaleX: 0.5, svgOrigin: "960 640" },
+        { opacity: 1, scaleX: 1, duration: 1.1, ease: "power3.out", svgOrigin: "960 640" },
+        0.05
+      );
+
+      // Hero name grows outward from the axis
+      letters.forEach((l, i) => {
+        const d = Math.abs(i - mid) * 0.07;
+        tl.fromTo(
+          l,
+          { opacity: 0.18, y: 36 },
+          { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+          0.0 + d
+        );
+      });
+
+      // Gold sheen across the hero letters, kept running into the hold
+      tl.fromTo(
+        letters,
+        { backgroundPosition: "0% 50%" },
+        { backgroundPosition: "100% 50%", duration: 5, ease: "none" },
+        0
+      );
+
+      // Hero shrinks and rises to the header position
+      tl.to("#hero", { y: -370, scale: 0.42, duration: 0.8, ease: "expo.inOut" }, 1.8);
+
+      // Cup assembles: saucer first, then body, handle, steam
+      tl.fromTo(
+        "#saucer",
+        { scaleX: 0.2, opacity: 0, svgOrigin: "960 650" },
+        { scaleX: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)", svgOrigin: "960 650" },
+        1.9
+      );
+      tl.fromTo(
+        "#body",
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" },
+        2.0
+      );
+      tl.fromTo("#handle", { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 2.15);
+
+      const steamPaths = [...document.querySelectorAll("#steam .steam")];
+      steamPaths.forEach((p, i) => {
+        const len = p.getTotalLength();
+        tl.fromTo(
+          p,
+          { strokeDasharray: len, strokeDashoffset: len, opacity: 1 },
+          { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" },
+          2.35 + i * 0.08
+        );
+      });
+
+      // Divider grows from the axis
+      tl.fromTo(
+        "#divider",
+        { scaleX: 0.1, opacity: 0, svgOrigin: "960 764" },
+        { scaleX: 1, opacity: 1, duration: 0.6, ease: "power2.out", svgOrigin: "960 764" },
+        2.1
+      );
+
+      // Tagline letters grow outward from the axis, all in by 2.8 s
+      lineChars.forEach((c, i) => {
+        const d = Math.abs(i - midL) * 0.02;
+        tl.fromTo(
+          c,
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+          2.1 + d
+        );
+      });
+
+      // Style label fades in early and stays
+      tl.fromTo("#label", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, 0.4);
+
+      // Hold: gentle steam sway, rays breathe, gold sheen continues
+      tl.to(
+        steamPaths,
+        { y: -7, duration: 0.7, ease: "sine.inOut", yoyo: true, repeat: 2 },
+        2.8
+      );
+      tl.to("#rays", { opacity: 0.72, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

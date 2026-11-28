@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "PCSans";
+        src: url("assets/SpaceGrotesk.ttf") format("truetype");
+        font-weight: 300 700;
+        font-style: normal;
+      }
+      :root {
+        --ground: #090e18;
+        --ink: #f5f5f2;
+        --accent: #56cddd;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: var(--ground);
+        font-family: "PCSans", sans-serif;
+        color: var(--ink);
+      }
+      #cv-wrap {
+        position: absolute;
+        inset: 0;
+      }
+      #cv {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+      #label {
+        position: absolute;
+        left: 72px;
+        top: 64px;
+        font-size: 28px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        white-space: nowrap;
+      }
+      #label::before {
+        content: "";
+        width: 14px;
+        height: 14px;
+        background: var(--accent);
+        display: block;
+      }
+      #copy {
+        position: absolute;
+        left: 1040px;
+        top: 372px;
+        width: 800px;
+        opacity: 1;
+      }
+      #copy .l1,
+      #copy .l2 {
+        font-size: 84px;
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        line-height: 1.04;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #name {
+        position: absolute;
+        left: 1040px;
+        top: 700px;
+        font-size: 50px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        color: var(--accent);
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="cv-wrap" class="clip" data-start="0" data-duration="5" data-track-index="0">
+        <canvas id="cv" width="1920" height="1080"></canvas>
+      </div>
+      <div id="label" class="clip" data-start="0" data-duration="5" data-track-index="2">Point Cloud</div>
+      <div id="copy" class="clip" data-start="0" data-duration="5" data-track-index="1">
+        <div class="l1">Fresh coffee,</div>
+        <div class="l2">every morning</div>
+      </div>
+      <div id="name" class="clip" data-start="0" data-duration="5" data-track-index="1">Lantern Bean</div>
+    </div>
+    <script>
+      (async function () {
+        const W = 1920, H = 1080, F = 1400, CX = 960, CY = 540;
+        const BG = "#090e18";
+        const INK = [245, 245, 242];
+        const ACC = [86, 205, 221];
+        const SC = 1.45; // cup scale
+        const OX = -400, OY = 0; // cup offset in world units
+
+        await document.fonts.load('700 200px "PCSans"');
+        await document.fonts.load('500 34px "PCSans"');
+
+        // ---- seeded PRNG (no Math.random, deterministic) ----
+        function mulberry32(a) {
+          return function () {
+            a |= 0; a = (a + 0x6d2b79f5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        const rng = mulberry32(17);
+        const lerp = (a, b, t) => a + (b - a) * t;
+        const clamp01 = (t) => (t < 0 ? 0 : t > 1 ? 1 : t);
+        const easeOut = (t) => 1 - Math.pow(1 - clamp01(t), 3);
+        const easeIn = (t) => Math.pow(clamp01(t), 3);
+        const easeInOut = (t) => {
+          t = clamp01(t);
+          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        };
+        const mix3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+        function heightColor(t) {
+          const lo = [80, 180, 200], mid = ACC, hi = INK;
+          return t < 0.6 ? mix3(lo, mid, t / 0.6) : mix3(mid, hi, (t - 0.6) / 0.4);
+        }
+
+        // ---- hero: sample "Lantern Bean" into points ----
+        const cv = document.getElementById("cv");
+        const ctx = cv.getContext("2d");
+        const off = document.createElement("canvas");
+        off.width = W; off.height = H;
+        const o = off.getContext("2d", { willReadFrequently: true });
+        let fs = 230;
+        o.font = `700 ${fs}px "PCSans"`;
+        let tw = o.measureText("Lantern Bean").width;
+        if (tw > 1560) {
+          fs = Math.floor((fs * 1560) / tw);
+          o.font = `700 ${fs}px "PCSans"`;
+          tw = o.measureText("Lantern Bean").width;
+        }
+        o.textAlign = "center";
+        o.textBaseline = "middle";
+        o.fillStyle = "#fff";
+        o.fillText("Lantern Bean", W / 2, H / 2 + fs * 0.02);
+        const img = o.getImageData(0, 0, W, H).data;
+        const hero = [];
+        const x0 = Math.floor(W / 2 - tw / 2) - 4, x1 = Math.ceil(W / 2 + tw / 2) + 4;
+        const y0 = Math.floor(H / 2 - fs * 0.62), y1 = Math.ceil(H / 2 + fs * 0.62);
+        for (let y = y0; y < y1; y += 3) {
+          for (let x = x0; x < x1; x += 3) {
+            if (img[(y * W + x) * 4 + 3] > 128) {
+              const tx = x - W / 2 + (rng() - 0.5) * 1.5;
+              const ty = H / 2 - y + (rng() - 0.5) * 1.5;
+              const u = rng() * 2 - 1, v = rng() * 2 - 1;
+              hero.push({
+                tx, ty,
+                sx: (rng() - 0.5) * 1700,
+                sy: (rng() - 0.5) * 760,
+                sz: (rng() - 0.5) * 1100,
+                d: 0.02 + 0.12 * ((x - x0) / (x1 - x0)) + rng() * 0.03,
+                dx: u, dy: v,
+                r: rng(),
+              });
+            }
+          }
+        }
+
+        // ---- cup: points on body, rim, coffee, handle, saucer, steam ----
+        const cup = [];
+        const addCup = (x, y, z, col, kind) => {
+          const d = 1.8 + rng() * 0.35;
+          cup.push({
+            x, y, z, col, kind, d,
+            sx: (rng() - 0.5) * 1400,
+            sy: (rng() - 0.5) * 1100,
+            sz: (rng() - 0.5) * 900,
+          });
+        };
+        for (let i = 0; i < 4200; i++) {
+          const h = rng(), th = rng() * Math.PI * 2;
+          const r = lerp(105, 135, h) + (rng() - 0.5) * 4;
+          const y = -150 + h * 240;
+          addCup(r * Math.cos(th), y, r * Math.sin(th), heightColor((y + 160) / 260), "body");
+        }
+        for (let i = 0; i < 640; i++) {
+          const th = rng() * Math.PI * 2, r = 135 + (rng() - 0.5) * 3;
+          addCup(r * Math.cos(th), 90, r * Math.sin(th), INK, "rim");
+        }
+        for (let i = 0; i < 800; i++) {
+          const th = rng() * Math.PI * 2, r = 126 * Math.sqrt(rng());
+          addCup(r * Math.cos(th), 84, r * Math.sin(th), ACC, "coffee");
+        }
+        for (let i = 0; i < 260; i++) {
+          const th = rng() * Math.PI * 2, r = 105 * Math.sqrt(rng());
+          addCup(r * Math.cos(th), -150, r * Math.sin(th), heightColor(0.05), "bottom");
+        }
+        for (let i = 0; i < 1100; i++) {
+          const phi = -Math.PI / 2 + rng() * Math.PI;
+          const R = 60 + (rng() - 0.5) * 14;
+          const x = 110 + R * Math.cos(phi), y = -20 + R * Math.sin(phi);
+          addCup(x, y, (rng() - 0.5) * 14, heightColor(0.55 + 0.3 * rng()), "handle");
+        }
+        for (let i = 0; i < 1700; i++) {
+          const th = rng() * Math.PI * 2, r = 190 * Math.sqrt(rng());
+          addCup(r * Math.cos(th), -160 + (rng() - 0.5) * 2, r * Math.sin(th), [63, 159, 179], "saucer");
+        }
+        for (let i = 0; i < 260; i++) {
+          const th = rng() * Math.PI * 2, r = 190 + (rng() - 0.5) * 2;
+          addCup(r * Math.cos(th), -158, r * Math.sin(th), [63, 159, 179], "saucer");
+        }
+        const steam = [];
+        for (let w = 0; w < 3; w++) {
+          for (let i = 0; i < 300; i++) {
+            steam.push({ w, s: rng(), j: rng() - 0.5, ph: rng() * 6.283 });
+          }
+        }
+
+        // ---- floor: faint dotted grid ----
+        const floor = [];
+        for (let x = -1400; x <= 1400; x += 70) {
+          for (let z = -1000; z <= 200; z += 50) floor.push({ x, z });
+        }
+
+        const proj = (x, y, z) => {
+          const k = F / (F - z);
+          return [CX + x * k, CY - y * k, k];
+        };
+        const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a.toFixed(3)})`;
+        const dot = (sx, sy, s) => ctx.fillRect(sx - s / 2, sy - s / 2, s, s);
+
+        // copy and label elements
+        const copy = document.getElementById("copy");
+        const nameEl = document.getElementById("name");
+        const l1 = copy.querySelector(".l1"), l2 = copy.querySelector(".l2");
+
+        function draw(T) {
+          ctx.fillStyle = BG;
+          ctx.fillRect(0, 0, W, H);
+
+          // floor (slow drift, seamless wrap every 50 units)
+          const zs = (T * 14) % 50;
+          for (const p of floor) {
+            const z = p.z + zs;
+            const [sx, sy, k] = proj(p.x, -380, z);
+            if (sx < -10 || sx > W + 10 || sy < -10 || sy > H + 10) continue;
+            const a = 0.2 * clamp01((z + 1000) / 900);
+            ctx.fillStyle = rgba(ACC, a);
+            dot(sx, sy, Math.min(2.4, 1.2 * k));
+          }
+
+          // scan line sweep across the hero
+          const sweepT = easeInOut((T - 0.2) / 1.3);
+          const xs = -60 + (W + 120) * sweepT;
+          const scanOn = T > 0.2 && T < 1.5;
+
+          // hero points: scatter -> form lettering -> disperse
+          if (T < 2.3) {
+            let k2 = 0;
+            if (T > 1.7) k2 = easeIn((T - 1.7) / 0.5);
+            for (const p of hero) {
+              const e = easeOut((T - p.d) / 0.33);
+              let x = lerp(p.sx, p.tx, e);
+              let y = lerp(p.sy, p.ty, e);
+              let z = lerp(p.sz, 0, e);
+              if (k2 > 0) {
+                x += p.dx * k2 * 700;
+                y += p.dy * k2 * 500;
+                z += k2 * 300;
+              }
+              const [sx, sy, k] = proj(x, y, z);
+              const shimmer = 0.88 + 0.12 * Math.sin(T * 6 + p.r * 20);
+              let a = (0.35 + 0.65 * e) * (1 - k2) * shimmer;
+              let c = INK;
+              if (scanOn && Math.abs(sx - xs) < 26 && e > 0.5) {
+                c = ACC;
+                a = 1;
+              }
+              ctx.fillStyle = rgba(c, a);
+              dot(sx, sy, clamp01(k - 0.9) * 2.4 + 1.6);
+            }
+          }
+          if (scanOn) {
+            ctx.fillStyle = rgba(ACC, 0.35);
+            ctx.fillRect(xs - 1, 0, 2, H);
+          }
+
+          // cup: points gather into the cup, then gentle sway
+          if (T > 1.75) {
+            const a = 0.35 + 0.1 * Math.sin(T * 0.7);
+            const ca = Math.cos(a), sa = Math.sin(a);
+            for (const p of cup) {
+              const e = easeOut((T - p.d) / 0.6);
+              const lx = p.x * SC, ly = p.y * SC, lz = p.z * SC;
+              const tx = lx * ca + lz * sa + OX;
+              const ty = ly + OY;
+              const tz = -lx * sa + lz * ca;
+              const x = lerp(p.sx, tx, e);
+              const y = lerp(p.sy, ty, e);
+              const z = lerp(p.sz, tz, e);
+              const [sx, sy, k] = proj(x, y, z);
+              const alpha = (0.65 + 0.35 * e) * clamp01(0.8 + 0.2 * (k - 1) * 4);
+              ctx.fillStyle = rgba(p.col, alpha);
+              dot(sx, sy, clamp01(k - 0.9) * 2.4 + 2.6);
+            }
+
+            // steam rising from the mouth
+            const sa2 = clamp01((T - 2.3) / 0.7);
+            if (sa2 > 0) {
+              for (const q of steam) {
+                const s = q.s;
+                const lx = (q.w - 1) * 46 * s * 0.6 + Math.sin(s * 7 + T * 1.6 + q.w * 2) * 16 * (0.3 + s) + q.j * 6;
+                const ly = 100 + s * 230;
+                const lz = Math.cos(s * 5 + T + q.w) * 12 * s + q.j * 4;
+                const x = lx * SC * ca + lz * SC * sa + OX;
+                const y = ly * SC + OY;
+                const z = -lx * SC * sa + lz * SC * ca;
+                const [sx, sy, k] = proj(x, y, z);
+                const alpha = 0.55 * sa2 * (1 - s) * (1 - s);
+                ctx.fillStyle = rgba(INK, alpha);
+                dot(sx, sy, 1.6);
+              }
+            }
+          }
+
+          // plain-type copy (fades in by 2.8 s)
+          const lineA = easeOut((T - 2.2) / 0.6);
+          const nameA = easeOut((T - 2.45) / 0.45);
+          copy.style.opacity = String(lineA);
+          nameEl.style.opacity = String(nameA);
+        }
+
+        const proxy = { t: 0 };
+        const tl = gsap.timeline({ paused: true });
+        tl.to(proxy, { t: 5, duration: 5, ease: "none", onUpdate: () => draw(proxy.t) }, 0);
+        draw(0);
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+  </body>
+</html>

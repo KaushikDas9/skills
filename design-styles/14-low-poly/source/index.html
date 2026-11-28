@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "LP Inter";
+        src: url("assets/inter-800.woff2") format("woff2");
+        font-weight: 800;
+        font-style: normal;
+      }
+      :root {
+        --paper: #f6eedd;
+        --ink: #3b3552;
+        --blue: #2f5fd8;
+        --font-display: "LP Inter", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      #stage {
+        position: absolute;
+        inset: 0;
+      }
+      #art {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+      #label {
+        position: absolute;
+        left: 64px;
+        top: 60px;
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      #hero {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #hero-text {
+        font-size: 210px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        white-space: nowrap;
+        color: var(--ink);
+      }
+      #tag {
+        position: absolute;
+        left: 1010px;
+        top: 318px;
+        width: 800px;
+      }
+      #tag .line {
+        display: block;
+        font-size: 96px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.04;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #name {
+        display: block;
+        margin-top: 36px;
+        font-size: 52px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        line-height: 1.1;
+        color: var(--blue);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="stage" class="clip" data-start="0" data-duration="5" data-track-index="0">
+        <svg id="art" viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+          <g id="hill"></g>
+          <g id="cup">
+            <g id="saucer"></g>
+            <g id="handle"></g>
+            <g id="body"></g>
+            <g id="steam"></g>
+          </g>
+        </svg>
+        <div id="label">Low Poly</div>
+        <div id="hero"><span id="hero-text">Lantern Bean</span></div>
+        <div id="tag">
+          <span class="line l1">Fresh coffee,</span>
+          <span class="line l2">every morning</span>
+          <span id="name">Lantern Bean</span>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        const SVGNS = "http://www.w3.org/2000/svg";
+        // Palette from the style guide tokens (colours only; no artwork or layout copied).
+        const C = {
+          paper: "#FBF4E6", green: "#4DAF72", lgreen: "#9ED7A8", yellow: "#F4C54F",
+          sky: "#8CC8EE", pink: "#F49DB6", lilac: "#C9A6EC", peri: "#8F9DEA",
+          red: "#EE6B57", blue: "#2F5FD8", ink: "#3B3552", shade: "#7A5C86",
+        };
+
+        // Deterministic PRNG (no Math.random) so every render is identical.
+        function mulberry32(a) {
+          return function () {
+            a |= 0; a = (a + 0x6d2b79f5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        const rnd = mulberry32(19);
+
+        const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+        const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+        const sc = (a, k) => [a[0] * k, a[1] * k, a[2] * k];
+        const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+        const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+        const len = (a) => Math.hypot(a[0], a[1], a[2]);
+        const norm = (a) => sc(a, 1 / (len(a) || 1));
+
+        // Three shade bands: lit = base colour, mid = 10% toward shade, dark = 26% toward shade.
+        function hexToRgb(h) {
+          return [1, 3, 5].map((i) => parseInt(h.substr(i, 2), 16));
+        }
+        function mixHex(a, b, f) {
+          const A = hexToRgb(a), B = hexToRgb(b);
+          return "rgb(" + A.map((v, i) => Math.round(v + (B[i] - v) * f)).join(",") + ")";
+        }
+        function bandColor(base, t) {
+          if (t > 0.45) return base;
+          if (t > 0.05) return mixHex(base, C.shade, 0.1);
+          return mixHex(base, C.shade, 0.26);
+        }
+
+        // Camera: looking slightly down at the cup. Object frame: y up, z toward viewer.
+        const PH = (16 * Math.PI) / 180;
+        const cosP = Math.cos(PH), sinP = Math.sin(PH);
+        const V = [0, sinP, cosP];
+        const L = norm([-0.5, 0.8, 0.45]);
+        const S = 1.25, OX = 520, OY = 760;
+        const P2 = (p) => [OX + S * p[0], OY - S * (p[1] * cosP - p[2] * sinP)];
+
+        function el(tag, parent, attrs) {
+          const e = document.createElementNS(SVGNS, tag);
+          for (const k in attrs) e.setAttribute(k, attrs[k]);
+          parent.appendChild(e);
+          return e;
+        }
+        function poly(parent, pts2, fill) {
+          const e = el("polygon", parent, {
+            points: pts2.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" "),
+            fill: fill, stroke: fill, "stroke-width": "1.2", "stroke-linejoin": "round",
+          });
+          return e;
+        }
+
+        // Lathe: profile loop (r, y), ordered so the interior is on the left. Outward normal = (dy, -dr).
+        function lathe(profile, roles, segs, yOff) {
+          const tris = [];
+          for (let i = 0; i < profile.length - 1; i++) {
+            const ra = profile[i][0], ya = profile[i][1] + yOff;
+            const rb = profile[i + 1][0], yb = profile[i + 1][1] + yOff;
+            const dr = rb - ra, dy = yb - ya, pl = Math.hypot(dr, dy) || 1;
+            const pr = dy / pl, py = -dr / pl;
+            for (let k = 0; k < segs; k++) {
+              const a0 = (2 * Math.PI * k) / segs, a1 = (2 * Math.PI * (k + 1)) / segs, am = (a0 + a1) / 2;
+              const P = (r, y, a) => [r * Math.cos(a), y, r * Math.sin(a)];
+              const A = P(ra, ya, a0), B = P(rb, yb, a0), Cc = P(rb, yb, a1), D = P(ra, ya, a1);
+              const nOut = [pr * Math.cos(am), py, pr * Math.sin(am)];
+              [[A, B, Cc], [A, Cc, D]].forEach((t) => {
+                const cr = cross(sub(t[1], t[0]), sub(t[2], t[0]));
+                if (len(cr) < 1e-6) return;
+                let n = norm(cr);
+                if (dot(n, nOut) < 0) n = sc(n, -1);
+                tris.push({ p: t, n: n, c: roles[i] });
+              });
+            }
+          }
+          return tris;
+        }
+
+        // Handle: a tube swept along an arc in the x-y plane.
+        function handle(cx, cy, R, rad, a0, a1, arcSegs, profSegs, colour) {
+          const tris = [];
+          const curve = (th) => [cx + R * Math.cos(th), cy + R * Math.sin(th), 0];
+          const sec = (th, ph) => {
+            const N = [Math.cos(th), Math.sin(th), 0];
+            const Z = [0, 0, 1];
+            const c = curve(th);
+            return add(c, sc(add(sc(N, Math.cos(ph)), sc(Z, Math.sin(ph))), rad));
+          };
+          for (let i = 0; i < arcSegs; i++) {
+            for (let j = 0; j < profSegs; j++) {
+              const t0 = a0 + ((a1 - a0) * i) / arcSegs, t1 = a0 + ((a1 - a0) * (i + 1)) / arcSegs;
+              const p0 = (2 * Math.PI * j) / profSegs, p1 = (2 * Math.PI * (j + 1)) / profSegs;
+              const A = sec(t0, p0), B = sec(t1, p0), Cc = sec(t1, p1), D = sec(t0, p1);
+              const tm = (t0 + t1) / 2;
+              [[A, B, Cc], [A, Cc, D]].forEach((t) => {
+                const cr = cross(sub(t[1], t[0]), sub(t[2], t[0]));
+                if (len(cr) < 1e-6) return;
+                const cen = sc(add(add(t[0], t[1]), t[2]), 1 / 3);
+                let n = norm(cr);
+                if (dot(n, sub(cen, curve(tm))) < 0) n = sc(n, -1);
+                tris.push({ p: t, n: n, c: colour });
+              });
+            }
+          }
+          return tris;
+        }
+
+        // Visible faces only (back-face culled), shaded per face, sorted far to near.
+        function projectMesh(tris) {
+          const out = [];
+          tris.forEach((t) => {
+            if (dot(t.n, V) <= 0) return;
+            const cen = sc(add(add(t.p[0], t.p[1]), t.p[2]), 1 / 3);
+            out.push({ pts: t.p.map(P2), d: dot(cen, V), fill: bandColor(t.c, dot(t.n, L)) });
+          });
+          out.sort((a, b) => a.d - b.d);
+          return out;
+        }
+
+        const faceGroups = {};
+        function build(groupId, tris) {
+          const g = document.getElementById(groupId);
+          const faces = projectMesh(tris).map((f) => poly(g, f.pts, f.fill));
+          faceGroups[groupId] = faces;
+          return faces;
+        }
+
+        // Saucer: lathe, dish top at y = -24, flat foot underneath.
+        const saucerProfile = [
+          [0, -40], [150, -40], [226, -30], [268, -12], [278, -2], [250, -6], [150, -24], [0, -24],
+        ];
+        const saucerRoles = [C.peri, C.peri, C.peri, C.lilac, C.peri, C.peri, C.peri];
+        const saucerTris = lathe(saucerProfile, saucerRoles, 9, 0);
+
+        // Cup body: lathe with a yellow band and blue rim; coffee top is ink. Sits on dish (y -24).
+        const cupProfile = [
+          [0, 0], [104, 0], [120, 70], [129, 110], [136, 150], [146, 250], [153, 262], [146, 266],
+          [138, 254], [132, 240], [0, 240],
+        ];
+        const cupRoles = [
+          C.red, C.red, C.red, C.yellow, C.red, C.red, C.blue, C.blue, C.lilac, C.ink,
+        ];
+        const bodyTris = lathe(cupProfile, cupRoles, 9, -24);
+
+        // Handle: attached on the right side, ends buried inside the body.
+        const handleTris = handle(128, 146, 62, 15, (-115 * Math.PI) / 180, (115 * Math.PI) / 180, 8, 6, C.red);
+
+        // Ground: low-poly hill across the bottom, faces shaded from jittered vertex heights.
+        const hillCols = 20, hillX = (i) => (i * 1920) / hillCols;
+        const hillRows = [
+          (i) => 836 + (rnd() - 0.5) * 36,
+          (i) => 930 + (rnd() - 0.5) * 40,
+          (i) => 1010 + (rnd() - 0.5) * 30,
+          () => 1080,
+        ];
+        const grid = [];
+        for (let r = 0; r < hillRows.length; r++) {
+          grid[r] = [];
+          for (let i = 0; i <= hillCols; i++) {
+            const edge = i === 0 || i === hillCols || r === 3;
+            const x = hillX(i) + (edge ? 0 : (rnd() - 0.5) * 60);
+            const y = hillRows[r](i);
+            grid[r][i] = [x, y, (rnd() - 0.5) * 140];
+          }
+        }
+        const hillPal = [C.green, C.lgreen, C.yellow, C.green, C.lgreen];
+        const hillTris = [];
+        for (let r = 0; r < hillRows.length - 1; r++) {
+          for (let i = 0; i < hillCols; i++) {
+            const a = grid[r][i], b = grid[r][i + 1], c = grid[r + 1][i + 1], d = grid[r + 1][i];
+            const quadCen = (i + 0.5) / hillCols;
+            [[a, b, c], [a, c, d]].forEach((t) => {
+              const n = norm(cross(sub(t[1], t[0]), sub(t[2], t[0])));
+              const nn = dot(n, [0, 0, 1]) < 0 ? sc(n, -1) : n;
+              const pick = hillPal[Math.floor(rnd() * hillPal.length)];
+              const base = quadCen > 0.62 && r === 0 ? C.yellow : pick;
+              hillTris.push({ p: t, n: nn, c: base });
+            });
+          }
+        }
+        // Hill faces: screen space, already 2D.
+        const hillG = document.getElementById("hill");
+        const hillFaces = [];
+        hillTris.forEach((t) => {
+          const f = poly(hillG, t.p.map((p) => [p[0], p[1]]), bandColor(t.c, dot(t.n, L)));
+          hillFaces.push(f);
+        });
+
+        const saucerFaces = build("saucer", saucerTris);
+        const handleFaces = build("handle", handleTris);
+        const bodyFaces = build("body", bodyTris);
+
+        // Steam: three faceted ribbons above the mouth, built in screen space.
+        const steamG = document.getElementById("steam");
+        const M = P2([0, 238, 0]);
+        const steamCols = [C.lilac, C.pink, C.peri];
+        const steamFaces = [];
+        [-46, 0, 46].forEach((off, ri) => {
+          const segN = 6;
+          for (let i = 0; i < segN; i++) {
+            const t0 = i / segN, t1 = (i + 1) / segN;
+            const pt = (t, side) => {
+              const y = M[1] - 22 - 230 * t;
+              const x = M[0] + off * (0.35 + 0.65 * t) + 18 * Math.sin(t * 5 + ri * 1.7) * (0.3 + t);
+              const w = (20 - 10 * t) / 2;
+              return [x + side * w, y];
+            };
+            const q = [pt(t0, -1), pt(t0, 1), pt(t1, 1), pt(t1, -1)];
+            steamFaces.push(poly(steamG, [q[0], q[1], q[2]], steamCols[(i + ri) % 3]));
+            steamFaces.push(poly(steamG, [q[0], q[2], q[3]], steamCols[(i + ri + 1) % 3]));
+          }
+        });
+
+        // Label and text
+        const tl = gsap.timeline({ paused: true });
+
+        // 0.0 - 1.8 s: hill rises, hero name settles, then leaves.
+        tl.fromTo("#label", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 0);
+        tl.fromTo(hillFaces, { scale: 0 }, { scale: 1, duration: 0.5, ease: "back.out(1.2)", stagger: { each: 0.006, from: "start" } }, 0);
+        tl.fromTo("#hero-text", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, 0.1);
+        tl.to("#hero-text", { y: -24, opacity: 0, duration: 0.35, ease: "power2.in" }, 1.45);
+
+        // 1.8 - 2.8 s: cup assembles face by face, saucer first, then handle, then body.
+        // Solid parts rise in turn, bottom to top: the cup is never shown in shards.
+        tl.fromTo("#saucer", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 1.8);
+        tl.fromTo("#body", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.0);
+        tl.fromTo("#handle", { x: 30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 2.25);
+        tl.fromTo("#steam", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 2.5);
+        tl.fromTo("#tag .l1", { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.55, ease: "power3.out" }, 2.0);
+        tl.fromTo("#tag .l2", { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.55, ease: "power3.out" }, 2.15);
+        tl.fromTo("#name", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 2.4);
+
+        // 2.8 - 5.0 s: hold with gentle movement only.
+        tl.fromTo("#cup", { rotation: -1.2 }, { rotation: 1.2, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1, transformOrigin: "50% 100%" }, 2.8);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+  </body>
+</html>

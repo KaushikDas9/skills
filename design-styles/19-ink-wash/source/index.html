@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Cormorant Local";
+        src: url("assets/CormorantGaramond-VF.ttf") format("truetype");
+        font-weight: 300 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Plex Mono Local";
+        src: url("assets/IBMPlexMono-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      :root {
+        --paper: #f2ede1;
+        --ink: #141413;
+        --ink-soft: #3a3935;
+        --seal: #c8372d;
+        --font-display: "Cormorant Local", serif;
+        --font-mono: "Plex Mono Local", monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse 70% 60% at 50% 46%, rgba(255, 252, 240, 0.55), rgba(255, 252, 240, 0) 70%),
+          var(--paper);
+        color: var(--ink);
+        font-family: var(--font-display);
+      }
+      /* paper grain: static, sits under everything */
+      .grain {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      /* hero */
+      #scene-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #hero-name {
+        position: relative;
+        font-family: var(--font-display);
+        font-weight: 500;
+        font-size: 236px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        white-space: nowrap;
+        clip-path: inset(0 100% 0 0);
+      }
+      #hero-rule {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        pointer-events: none;
+      }
+      #hero-seal {
+        position: absolute;
+        left: 1210px;
+        top: 316px;
+        width: 58px;
+        height: 58px;
+        opacity: 0;
+      }
+      /* cup scene */
+      #cup {
+        position: absolute;
+        left: 150px;
+        top: 250px;
+        width: 720px;
+        height: 564px;
+        overflow: visible;
+      }
+      #cup-blot {
+        position: absolute;
+        left: 60px;
+        top: 200px;
+        width: 840px;
+        height: 700px;
+        opacity: 0;
+        pointer-events: none;
+      }
+      #copy {
+        position: absolute;
+        left: 960px;
+        top: 440px;
+        width: 860px;
+      }
+      #line {
+        font-family: var(--font-display);
+        font-weight: 500;
+        font-size: 84px;
+        line-height: 1.05;
+        letter-spacing: -0.005em;
+        color: var(--ink);
+        white-space: nowrap;
+        opacity: 0;
+      }
+      #sig-wrap {
+        margin-top: 46px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+      }
+      #sig-rule {
+        display: block;
+        width: 84px;
+        height: 2px;
+        background: var(--ink);
+        transform-origin: left center;
+        opacity: 0;
+      }
+      #sig {
+        font-family: var(--font-mono);
+        font-size: 30px;
+        letter-spacing: 0.08em;
+        color: var(--ink);
+        opacity: 0;
+        white-space: nowrap;
+      }
+      /* style label */
+      #style-label {
+        position: absolute;
+        right: 64px;
+        bottom: 60px;
+        font-family: var(--font-mono);
+        font-size: 28px;
+        letter-spacing: 0.2em;
+        color: var(--ink);
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <svg class="grain" aria-hidden="true">
+        <filter id="paper">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n" />
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.42  0 0 0 0 0.36  0 0 0 0.09 0" />
+        </filter>
+        <rect width="1920" height="1080" filter="url(#paper)" />
+      </svg>
+
+      <!-- Scene 1: hero name, 0.0 - 1.8 s -->
+      <div id="scene-hero" class="clip" data-start="0" data-duration="1.8" data-track-index="0">
+        <div id="hero-name">Lantern Bean</div>
+        <svg id="hero-rule" viewBox="0 0 1920 1080" aria-hidden="true">
+          <filter id="edge-hero" x="-5%" y="-50%" width="110%" height="200%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="3" result="t" />
+            <feDisplacementMap in="SourceGraphic" in2="t" scale="9" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <path
+            id="hero-stroke"
+            d="M560 640 C 800 628, 1100 648, 1372 634"
+            fill="none"
+            stroke="#141413"
+            stroke-width="5"
+            stroke-linecap="round"
+            filter="url(#edge-hero)"
+            stroke-dasharray="900"
+            stroke-dashoffset="900"
+          />
+        </svg>
+        <svg id="hero-seal" viewBox="0 0 58 58" aria-hidden="true">
+          <rect x="0" y="0" width="58" height="58" rx="4" fill="#c8372d" />
+          <path d="M14 20 C 24 14, 34 15, 44 19 M16 31 C 26 27, 36 28, 44 33 M22 42 C 30 40, 36 41, 42 44" fill="none" stroke="#f2ede1" stroke-width="3.2" stroke-linecap="round" />
+        </svg>
+      </div>
+
+      <!-- Scene 2: cup and copy, 1.8 - 5.0 s -->
+      <div id="scene-cup" class="clip" data-start="1.8" data-duration="3.2" data-track-index="0">
+
+
+        <svg id="cup" viewBox="0 0 600 470" aria-hidden="true">
+          <defs>
+            <!-- ink edge: slightly irregular, barely soft; no halo, so no haze around the shape -->
+            <filter id="ink" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+              <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="9" result="rough" />
+              <feDisplacementMap in="SourceGraphic" in2="rough" scale="7" xChannelSelector="R" yChannelSelector="G" result="wob" />
+              <feGaussianBlur in="wob" stdDeviation="0.6" />
+            </filter>
+            <clipPath id="body-shape">
+              <path d="M150 170 L450 170 C 448 290, 420 360, 362 392 L 238 392 C 180 360, 152 290, 150 170 Z" />
+            </clipPath>
+            <filter id="edge-cup" x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="11" result="t" />
+              <feDisplacementMap in="SourceGraphic" in2="t" scale="6" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+            <linearGradient id="body-g" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#2e2d29" />
+              <stop offset="0.3" stop-color="#1c1b19" />
+              <stop offset="0.7" stop-color="#0c0c0b" />
+              <stop offset="1" stop-color="#171614" />
+            </linearGradient>
+            <clipPath id="body-reveal-clip">
+              <rect id="body-reveal" x="0" y="0" width="600" height="470" />
+            </clipPath>
+          </defs>
+
+          <g filter="url(#ink)">
+          <!-- saucer, centred under the cup body -->
+          <g id="saucer">
+            <ellipse cx="300" cy="410" rx="270" ry="34" fill="#141413" opacity="0.9" />
+            <ellipse cx="300" cy="402" rx="196" ry="18" fill="none" stroke="#f2ede1" stroke-opacity="0.22" stroke-width="3" />
+          </g>
+
+          <!-- steam, above the mouth -->
+          <g id="steam" fill="none" stroke="#141413" stroke-width="6" stroke-linecap="round" opacity="0.55">
+            <path class="wisp" d="M236 130 C 218 108, 258 88, 238 60 C 222 36, 256 18, 240 4" />
+            <path class="wisp" d="M300 124 C 282 100, 322 80, 302 52 C 286 28, 320 12, 304 -6" />
+            <path class="wisp" d="M364 130 C 346 108, 386 88, 366 60 C 350 36, 384 18, 368 4" />
+          </g>
+
+          <!-- handle first, so the body overlaps its ends and it reads as one object -->
+          <path id="handle" d="M438 206 C 532 186, 556 296, 440 338" fill="none" stroke="#141413" stroke-width="30" stroke-linecap="round" />
+
+          <!-- body, rising like a wash -->
+          <g clip-path="url(#body-reveal-clip)">
+            <g id="body">
+              <path d="M150 170 L450 170 C 448 290, 420 360, 362 392 L 238 392 C 180 360, 152 290, 150 170 Z" fill="url(#body-g)" />
+              <path d="M186 214 C 181 270, 192 322, 216 358" fill="none" stroke="#f2ede1" stroke-opacity="0.2" stroke-width="13" stroke-linecap="round" />
+              <g clip-path="url(#body-shape)">
+                <ellipse cx="250" cy="236" rx="90" ry="58" fill="#4a4842" opacity="0.45" />
+                <ellipse cx="392" cy="330" rx="70" ry="44" fill="#000" opacity="0.5" />
+                <path d="M196 196 C 214 250, 222 318, 244 388" fill="none" stroke="#f2ede1" stroke-opacity="0.22" stroke-width="5" stroke-linecap="round" stroke-dasharray="70 9 26 7" />
+                <path d="M292 186 C 306 246, 314 310, 302 396" fill="none" stroke="#f2ede1" stroke-opacity="0.16" stroke-width="4" stroke-linecap="round" stroke-dasharray="54 12 34 6" />
+                <path d="M368 196 C 384 246, 386 300, 372 370" fill="none" stroke="#f2ede1" stroke-opacity="0.2" stroke-width="6" stroke-linecap="round" stroke-dasharray="46 8 18 9" />
+              </g>
+            </g>
+          </g>
+
+          <!-- coffee surface at the mouth -->
+          <g id="mouth" opacity="0">
+            <ellipse cx="300" cy="170" rx="150" ry="24" fill="#3a3935" />
+            <ellipse cx="300" cy="168" rx="120" ry="13" fill="#2a2925" />
+            <path d="M236 164 C 262 160, 290 162, 318 163" fill="none" stroke="#f2ede1" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
+          </g>
+          </g>
+        </svg>
+
+        <div id="copy">
+          <div id="line">Fresh coffee, every morning</div>
+          <div id="sig-wrap">
+            <span id="sig-rule"></span>
+            <span id="sig">Lantern Bean</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="scene-label" class="clip" data-start="0" data-duration="5" data-track-index="1">
+        <div id="style-label">Ink Wash</div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1: hero, 0.0 - 1.8 s
+      tl.fromTo("#hero-name", { clipPath: "inset(0 40% 0 0)", opacity: 0 }, { clipPath: "inset(0 0% 0 0)", opacity: 1, duration: 0.7, ease: "power2.out" }, 0);
+      tl.fromTo("#hero-stroke", { strokeDashoffset: 900 }, { strokeDashoffset: 0, duration: 0.6, ease: "power2.out" }, 0.45);
+      tl.fromTo("#hero-seal", { opacity: 0, scale: 1.5, rotation: -8 }, { opacity: 1, scale: 1, rotation: -3, duration: 0.25, ease: "power3.out" }, 0.9);
+      tl.fromTo("#hero-name", { opacity: 1 }, { opacity: 0, y: -18, duration: 0.3, ease: "power2.in", immediateRender: false }, 1.45);
+      tl.to("#hero-seal", { opacity: 0, duration: 0.25, ease: "power2.in" }, 1.5);
+      tl.to("#hero-stroke", { opacity: 0, duration: 0.25, ease: "power2.in" }, 1.5);
+
+      // Scene 2: cup and copy, 1.8 - 5.0 s
+      tl.fromTo("#saucer", { opacity: 0, scaleX: 0.3, transformOrigin: "50% 50%" }, { opacity: 1, scaleX: 1, duration: 0.45, ease: "power2.out" }, 1.9);
+      tl.fromTo("#body-reveal", { attr: { y: 470, height: 0 } }, { attr: { y: 0, height: 470 }, duration: 0.6, ease: "power2.inOut" }, 2.0);
+      tl.fromTo("#handle", { strokeDasharray: 420, strokeDashoffset: 420 }, { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, 2.25);
+      tl.fromTo("#mouth", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 2.5);
+      tl.fromTo(".wisp", { strokeDasharray: 400, strokeDashoffset: 400 }, { strokeDashoffset: 0, duration: 0.6, ease: "power1.out", stagger: 0.12 }, 2.5);
+      tl.fromTo("#line", { opacity: 0, x: -36 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 2.25);
+      tl.fromTo("#sig-rule", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.35, ease: "power2.out" }, 2.55);
+      tl.fromTo("#sig", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 2.6);
+
+      // Hold, 2.9 - 5.0 s: gentle movement only
+      tl.to("#cup", { y: -7, duration: 1.0, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.9);
+      tl.to("#steam", { y: -8, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.9);
+
+      // Style label, always on
+      tl.fromTo("#style-label", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, 0.1);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

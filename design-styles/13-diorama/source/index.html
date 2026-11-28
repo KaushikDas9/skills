@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Inter Diorama";
+        src: url("assets/inter-800-latin.woff2") format("woff2");
+        font-weight: 800;
+        font-style: normal;
+      }
+      :root {
+        --paper: #f6eedd;
+        --cream: #fff7ec;
+        --soil-1: #eed0a6;
+        --soil-2: #ddb48a;
+        --soil-3: #c99a72;
+        --side: #a8724f;
+        --grass: #7fcba8;
+        --grass-top: #a6dcc0;
+        --mint-dark: #6fbe9b;
+        --coral: #f27d6a;
+        --lilac: #cdb9f0;
+        --ink: #3b3552;
+        --shade: #7a5c86;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: "Inter Diorama", "Inter", sans-serif;
+        font-weight: 800;
+        color: var(--ink);
+      }
+      .abs {
+        position: absolute;
+      }
+      .hide {
+        opacity: 0;
+      }
+      #paper {
+        inset: 0;
+      }
+      /* soft contact shadow under the whole model */
+      #shadow {
+        left: 900px;
+        top: 920px;
+        width: 960px;
+        height: 150px;
+        background: radial-gradient(closest-side, rgba(122, 92, 134, 0.38), rgba(122, 92, 134, 0));
+      }
+      #scene {
+        inset: 0;
+      }
+      /* the plinth: a block with a visible top, front and side, so it reads as a small object */
+      #base {
+        left: 960px;
+        top: 560px;
+        width: 860px;
+        height: 380px;
+      }
+      .layer {
+        position: absolute;
+        left: 0;
+        width: 860px;
+        transform-origin: 50% 100%;
+      }
+      #cap {
+        top: 0;
+        height: 58px;
+        background: var(--grass);
+      }
+      #l1 {
+        top: 58px;
+        height: 110px;
+        background: var(--soil-1);
+        border-top: 2px solid rgba(255, 247, 236, 0.6);
+      }
+      #l2 {
+        top: 168px;
+        height: 110px;
+        background: var(--soil-2);
+        border-top: 2px solid rgba(255, 247, 236, 0.35);
+      }
+      #l3 {
+        top: 278px;
+        height: 102px;
+        background: var(--soil-3);
+        border-top: 2px solid rgba(255, 247, 236, 0.25);
+      }
+      #top-face {
+        left: 0;
+        top: -54px;
+        width: 920px;
+        height: 54px;
+        background: var(--grass-top);
+        clip-path: polygon(0 100%, 860px 100%, 920px 0, 60px 0);
+      }
+      #side-face {
+        left: 860px;
+        top: -54px;
+        width: 60px;
+        height: 434px;
+        background: var(--side);
+        clip-path: polygon(0 54px, 60px 0, 60px 380px, 0 434px);
+      }
+      .obj {
+        position: absolute;
+        overflow: visible;
+      }
+      #cup-svg {
+        left: 1167px;
+        top: 243px;
+        width: 347px;
+        height: 347px;
+        overflow: visible;
+      }
+      /* tilt-shift: blur only the model, top and bottom, keep a sharp band around the cup */
+      #tilt {
+        left: 920px;
+        top: 0;
+        width: 1000px;
+        height: 1080px;
+        -webkit-backdrop-filter: blur(7px);
+        backdrop-filter: blur(7px);
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          #000 0%,
+          rgba(0, 0, 0, 0) 22%,
+          rgba(0, 0, 0, 0) 74%,
+          #000 86%
+        );
+        mask-image: linear-gradient(
+          to bottom,
+          #000 0%,
+          rgba(0, 0, 0, 0) 22%,
+          rgba(0, 0, 0, 0) 74%,
+          #000 86%
+        );
+      }
+      #hero {
+        left: 0;
+        top: 330px;
+        width: 1920px;
+        height: 280px;
+        font-size: 200px;
+        line-height: 280px;
+        text-align: center;
+        white-space: nowrap;
+        letter-spacing: -0.02em;
+        transform-origin: 50% 50%;
+      }
+      .ch {
+        display: inline-block;
+        transform-origin: 50% 100%;
+      }
+      #line {
+        left: 150px;
+        top: 380px;
+        width: 760px;
+        font-size: 104px;
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+      }
+      .blk {
+        display: block;
+        transform-origin: 50% 100%;
+      }
+      #label {
+        right: 64px;
+        bottom: 56px;
+        padding: 12px 24px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--cream);
+        font-size: 28px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        line-height: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="paper" class="abs"></div>
+      <div id="shadow" class="abs"></div>
+
+      <div id="scene" class="abs">
+        <div id="base" class="abs">
+          <div id="l3" class="layer"></div>
+          <div id="l2" class="layer"></div>
+          <div id="l1" class="layer"></div>
+          <div id="cap" class="layer"></div>
+          <div id="top-face" class="abs"></div>
+          <div id="side-face" class="abs"></div>
+
+          <!-- bench, left front -->
+          <svg id="bench-g" class="obj hide" style="left: 0px; top: -62px; width: 200px; height: 61px" viewBox="0 0 170 52">
+            <ellipse cx="85" cy="50" rx="80" ry="4" fill="#3b3552" opacity="0.18" />
+            <rect x="0" y="4" width="170" height="10" rx="3" fill="#a8724f" />
+            <rect x="0" y="18" width="170" height="11" rx="3" fill="#c99a72" />
+            <rect x="12" y="29" width="8" height="21" fill="#3b3552" />
+            <rect x="150" y="29" width="8" height="21" fill="#3b3552" />
+          </svg>
+
+          <!-- tree, right of the cup -->
+          <svg id="tree-g" class="obj hide" style="left: 570px; top: -292px; width: 200px; height: 292px" viewBox="0 0 130 190">
+            <ellipse cx="65" cy="186" rx="58" ry="8" fill="#3b3552" opacity="0.18" />
+            <rect x="58" y="110" width="14" height="76" fill="#8a5a44" />
+            <circle cx="38" cy="100" r="32" fill="#6fbe9b" />
+            <circle cx="94" cy="98" r="34" fill="#6fbe9b" />
+            <circle cx="65" cy="62" r="50" fill="#7fcba8" />
+            <circle cx="50" cy="44" r="16" fill="#8fd6b6" />
+          </svg>
+
+          <!-- lamp, far right -->
+          <svg id="lamp-g" class="obj hide" style="left: 790px; top: -262px; width: 70px; height: 262px" viewBox="0 0 60 200">
+            <ellipse cx="30" cy="196" rx="18" ry="4" fill="#3b3552" opacity="0.2" />
+            <rect x="27" y="64" width="6" height="134" fill="#3b3552" />
+            <circle cx="30" cy="56" r="36" fill="#fff0b8" opacity="0.45" />
+            <path d="M8 60 Q30 14 52 60 Z" fill="#fff7ec" stroke="#3b3552" stroke-width="3" stroke-linejoin="round" />
+          </svg>
+        </div>
+
+        <svg id="cup-svg" class="abs" viewBox="0 0 560 560">
+          <defs>
+            <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#FF9C8C" />
+              <stop offset="0.45" stop-color="#F27D6A" />
+              <stop offset="1" stop-color="#C95F55" />
+            </linearGradient>
+          </defs>
+          <g id="saucer" class="hide">
+            <ellipse cx="280" cy="500" rx="240" ry="30" fill="#7A5C86" opacity="0.22" />
+            <ellipse cx="280" cy="492" rx="240" ry="28" fill="#DDB48A" />
+            <ellipse cx="280" cy="484" rx="240" ry="28" fill="#FFF7EC" />
+            <ellipse cx="280" cy="484" rx="150" ry="17" fill="#EED0A6" />
+          </g>
+          <path
+            id="handle" class="hide"
+            d="M 388 270 C 480 240, 500 360, 386 386"
+            fill="none"
+            stroke="#F27D6A"
+            stroke-width="34"
+            stroke-linecap="round"
+          />
+          <g id="body" class="hide">
+            <path
+              d="M 160 220 L 400 220 L 384 400 Q 376 462 330 464 L 230 464 Q 184 462 176 400 Z"
+              fill="url(#bodyGrad)"
+            />
+            <ellipse cx="280" cy="220" rx="120" ry="22" fill="#FFB3A5" />
+            <ellipse cx="280" cy="224" rx="104" ry="14" fill="#6B4A3E" />
+            <ellipse cx="262" cy="221" rx="36" ry="4" fill="#8A6456" />
+          </g>
+          <g id="steam" class="hide">
+            <g id="steam-a" fill="#CDB9F0">
+              <circle cx="214" cy="150" r="16" />
+              <circle cx="232" cy="132" r="22" />
+              <circle cx="208" cy="112" r="14" />
+            </g>
+            <g id="steam-b" fill="#CDB9F0">
+              <circle cx="300" cy="140" r="15" />
+              <circle cx="318" cy="120" r="20" />
+              <circle cx="296" cy="98" r="12" />
+            </g>
+            <g id="steam-c" fill="#CDB9F0">
+              <circle cx="258" cy="92" r="11" />
+              <circle cx="272" cy="72" r="15" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <div id="tilt" class="abs"></div>
+
+      <div id="hero" class="abs" aria-label="Lantern Bean">
+        <span class="word"><span class="ch">L</span><span class="ch">a</span><span class="ch">n</span><span class="ch">t</span><span class="ch">e</span><span class="ch">r</span><span class="ch">n</span></span>
+        <span class="word"><span class="ch">B</span><span class="ch">e</span><span class="ch">a</span><span class="ch">n</span></span>
+      </div>
+
+      <div id="line" class="abs hide">
+        <span class="blk" id="line-1">Fresh coffee,</span>
+        <span class="blk" id="line-2">every morning</span>
+      </div>
+
+      <div id="label" class="abs">Diorama</div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Seeded speckle so the paper edge is the same every render.
+      (function () {
+        let seed = 1807;
+        const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+        const paper = document.getElementById("paper");
+        let svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">';
+        for (let i = 0; i < 900; i++) {
+          const x = rnd() * 1920;
+          const y = rnd() * 1080;
+          const edge = Math.min(x, 1920 - x, y, 1080 - y) / 200;
+          if (edge > 1 && rnd() > 0.15) continue;
+          const r = 0.6 + rnd() * 1.1;
+          svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#C99A72" opacity="${(0.18 + rnd() * 0.22).toFixed(2)}"/>`;
+        }
+        svg += "</svg>";
+        paper.innerHTML = svg;
+      })();
+
+      gsap.set(["#saucer", "#body"], { transformOrigin: "50% 100%" });
+
+      // Slam: free fall, squash on landing, damped wobble back to rest.
+      function slam(el, t, drop, hidden = true) {
+        if (hidden) tl.set(el, { opacity: 1 }, t);
+        tl.fromTo(
+          el,
+          { y: -drop, scaleY: 1.06 },
+          { y: 0, scaleY: 1, duration: 0.3, ease: "power2.in" },
+          t
+        )
+          .to(el, { scaleY: 0.84, scaleX: 1.1, duration: 0.07, ease: "power1.out" }, t + 0.3)
+          .to(el, { scaleY: 1, scaleX: 1, duration: 0.42, ease: "elastic.out(1, 0.45)" }, t + 0.37);
+      }
+
+      // Objects drop onto the grass (translate only, so no SVG scale origin issues).
+      function drop(el, t, dist) {
+        tl.set(el, { opacity: 1 }, t);
+        tl.fromTo(el, { y: -dist, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "bounce.out" }, t);
+      }
+
+      // Hero: letters slam in one by one.
+      document.querySelectorAll("#hero .ch").forEach((ch, i) => slam(ch, 0 + i * 0.055, 300, false));
+
+      // Hero moves to the top-left as a smaller name.
+      // Name is out of the way (top-left, small) before the line arrives at 2.1 s.
+      tl.to("#hero", { x: -576, y: -312, scale: 0.36, duration: 0.22, ease: "power2.inOut" }, 1.7);
+
+      // Plinth: layers slam bottom to top, 0.12 s apart.
+      // Plinth: one solid block drops in together (layers, top and side faces move as one).
+      tl.fromTo("#base", { y: -360, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, ease: "bounce.out" }, 1.7);
+
+      // Cup parts, in build order.
+      slam("#saucer", 2.2, 260);
+      slam("#body", 2.32, 300);
+      tl.set("#handle", { opacity: 1 }, 2.5);
+      tl.fromTo(
+        "#handle",
+        { scale: 0, transformOrigin: "386px 330px" },
+        { scale: 1, duration: 0.5, ease: "elastic.out(1, 0.5)" },
+        2.5
+      );
+      tl.set("#steam", { opacity: 1 }, 2.62);
+      tl.fromTo(
+        "#steam",
+        { scale: 0.4, transformOrigin: "280px 220px" },
+        { scale: 1, duration: 0.5, ease: "elastic.out(1, 0.6)" },
+        2.62
+      );
+
+      // Little props drop onto the grass.
+      drop("#bench-g", 2.45, 160);
+      drop("#tree-g", 2.6, 220);
+      drop("#lamp-g", 2.75, 220);
+
+      // Line blocks slam in.
+      // Line fades and rises in place, so it never passes through the name at its top-left spot.
+      tl.fromTo("#line", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 2.15);
+
+      // Hold: gentle movement only, ends at 5.0 s.
+      tl.to("#steam-a", { y: -14, duration: 1.1, ease: "sine.inOut" }, 2.9);
+      tl.to("#steam-b", { y: -18, duration: 1.1, ease: "sine.inOut" }, 3.0);
+      tl.to("#steam-c", { y: -10, duration: 1.1, ease: "sine.inOut" }, 3.1);
+      tl.to("#steam-a", { y: 0, duration: 1.0, ease: "sine.inOut" }, 4.0);
+      tl.to("#steam-b", { y: 0, duration: 1.0, ease: "sine.inOut" }, 4.1);
+      tl.to("#steam-c", { y: 0, duration: 1.0, ease: "sine.inOut" }, 4.2);
+      tl.to("#scene", { scale: 1.02, transformOrigin: "50% 50%", duration: 2.2, ease: "sine.inOut" }, 2.8);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "JBM";
+        src: url("assets/fonts/JetBrainsMono-400.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "JBM";
+        src: url("assets/fonts/JetBrainsMono-700.woff2") format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: block;
+      }
+      :root {
+        --bg: #06060a;
+        --ink: #fff6da;
+        --orange: #ff6a1a;
+        --gold: #ffc530;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        font-family: "JBM", monospace;
+        font-variant-ligatures: none;
+        font-feature-settings: "liga" 0, "calt" 0;
+      }
+      #glow {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 45% 55% at 26% 50%, rgba(255, 106, 26, 0.13), rgba(6, 6, 10, 0) 70%);
+      }
+      .clip {
+        position: absolute;
+      }
+      /* Every character is a fixed 0.6em x 1em monospaced cell, so blanks keep their width. */
+      #hero span,
+      #cup span,
+      #line span,
+      #name span,
+      #deco span {
+        display: inline-block;
+        width: 0.6em;
+        text-align: center;
+      }
+      #hero {
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: pre;
+        font-weight: 700;
+        font-size: 170px;
+        line-height: 1;
+        color: var(--ink);
+      }
+      #cupWrap {
+        left: 120px;
+        top: 96px;
+        width: 960px;
+        height: 960px;
+      }
+      #cup {
+        margin: 0;
+        font-weight: 400;
+        font-size: 25px;
+        line-height: 25px;
+        white-space: pre;
+        color: var(--ink);
+      }
+      #copy {
+        left: 980px;
+        top: 452px;
+        width: 840px;
+      }
+      #line {
+        font-weight: 400;
+        font-size: 46px;
+        line-height: 56px;
+        white-space: pre;
+        color: var(--ink);
+      }
+      #name {
+        margin-top: 18px;
+        font-weight: 700;
+        font-size: 40px;
+        line-height: 52px;
+        white-space: pre;
+        color: var(--gold);
+      }
+      #deco {
+        margin-top: 28px;
+        font-weight: 400;
+        font-size: 26px;
+        line-height: 32px;
+        white-space: pre;
+      }
+      #label {
+        right: 64px;
+        top: 56px;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 28px;
+        letter-spacing: 0.08em;
+        white-space: pre;
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="glow"></div>
+
+      <div id="hero" class="clip" data-start="0" data-duration="1.9" data-track-index="1"></div>
+
+      <div id="cupWrap" class="clip" data-start="1.85" data-duration="3.15" data-track-index="1">
+        <pre id="cup"></pre>
+      </div>
+
+      <div id="copy" class="clip" data-start="1.85" data-duration="3.15" data-track-index="2">
+        <div id="line"></div>
+        <div id="name"></div>
+        <div id="deco" aria-hidden="true" data-layout-ignore></div>
+      </div>
+
+      <div id="label" class="clip" data-start="0" data-duration="5" data-track-index="3">ASCII Art</div>
+    </div>
+    <script>
+      (function () {
+        var RAMP = ".,-~:;=!*#$@";
+        var FPS = 30;
+        var COLS = 60;
+        var ROWS = 40;
+        var CX = 18;
+        var RIM_Y = 16;
+        var RIM_RX = 9.6;
+        var RIM_RY = 2.4;
+        var SAU_Y = 34.2;
+        var INK = "#FFF6DA";
+        var GOLD = "#FFC530";
+        var HERO_TEXT = "Lantern Bean";
+        var LINE_TEXT = "Fresh coffee, every morning";
+        var NAME_TEXT = "Lantern Bean";
+        var STOPS = [
+          [0, [80, 120, 255]],
+          [0.3, [255, 90, 170]],
+          [0.6, [255, 150, 60]],
+          [0.85, [255, 210, 90]],
+          [1, [255, 246, 218]]
+        ];
+
+        function clamp(v, a, b) {
+          return v < a ? a : v > b ? b : v;
+        }
+        function ease(x) {
+          x = clamp(x, 0, 1);
+          return x * x * (3 - 2 * x);
+        }
+        // Deterministic integer hash, no Math.random.
+        function hash(a, b, c) {
+          var h = (Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263) + Math.imul(c | 0, 2147483647)) | 0;
+          h = Math.imul(h ^ (h >>> 13), 1274126177);
+          h ^= h >>> 16;
+          return (h >>> 0) / 4294967295;
+        }
+        function colFromL(L) {
+          L = clamp(L, 0, 1);
+          for (var i = 1; i < STOPS.length; i++) {
+            if (L <= STOPS[i][0]) {
+              var a0 = STOPS[i - 1][0], c0 = STOPS[i - 1][1];
+              var a1 = STOPS[i][0], c1 = STOPS[i][1];
+              var u = (L - a0) / (a1 - a0);
+              return (
+                "rgb(" +
+                Math.round(c0[0] + (c1[0] - c0[0]) * u) + "," +
+                Math.round(c0[1] + (c1[1] - c0[1]) * u) + "," +
+                Math.round(c0[2] + (c1[2] - c0[2]) * u) + ")"
+              );
+            }
+          }
+          return INK;
+        }
+        function glyphFromL(L) {
+          return RAMP.charAt(Math.min(RAMP.length - 1, Math.floor(clamp(L, 0, 0.999) * RAMP.length)));
+        }
+        function bodyHalf(y) {
+          if (y <= 25) return 9.6 - (y - 16) * (2.2 / 9);
+          var u = (y - 25) / 7;
+          return 7.4 * Math.sqrt(Math.max(0, 1 - u * u));
+        }
+
+        // Build spans for a text line.
+        function makeSpans(el, text) {
+          el.innerHTML = "";
+          var spans = [];
+          for (var i = 0; i < text.length; i++) {
+            var s = document.createElement("span");
+            s.textContent = " ";
+            el.appendChild(s);
+            spans.push(s);
+          }
+          return spans;
+        }
+
+        // Decode text: characters scramble through the ramp, then settle into the real letter.
+        function decodeSpans(spans, text, t, rtOf, settle, finalColor) {
+          for (var i = 0; i < spans.length; i++) {
+            var ch = text.charAt(i);
+            var sp = spans[i];
+            if (ch === " ") {
+              sp.textContent = " ";
+              continue;
+            }
+            var s = (t - rtOf(i)) / settle;
+            if (s >= 1 || (s > 0 && hash(i, 1, Math.floor(t * FPS)) < s)) {
+              sp.textContent = ch;
+              sp.style.color = finalColor(i);
+            } else {
+              var k = Math.floor(t * 12);
+              sp.textContent = RAMP.charAt(Math.floor(hash(i, 7, k) * RAMP.length));
+              sp.style.color = colFromL(0.05 + 0.5 * hash(i, 9, k));
+            }
+          }
+        }
+
+        // ---- Hero ----
+        var heroEl = document.getElementById("hero");
+        var heroSpans = makeSpans(heroEl, HERO_TEXT);
+
+        // ---- Cup grid ----
+        var cupEl = document.getElementById("cup");
+        var cupSpans = [];
+        var cupRT = [];
+        (function buildCup() {
+          var html = "";
+          for (var r = 0; r < ROWS; r++) {
+            for (var c = 0; c < COLS; c++) html += "<span> </span>";
+            html += "\n";
+          }
+          cupEl.innerHTML = html;
+          cupSpans = cupEl.querySelectorAll("span");
+          for (var r2 = 0; r2 < ROWS; r2++) {
+            for (var c2 = 0; c2 < COLS; c2++) {
+              var x = c2 * 0.6 + 0.3;
+              var y = r2 + 0.5;
+              var rad = clamp(Math.hypot((x - CX) / 16, (y - 22) / 20), 0, 1);
+              cupRT.push(1.85 + 0.55 * rad + 0.1 * hash(c2, r2, 3));
+            }
+          }
+        })();
+
+        // Returns {L} for the cup element at a sample point, or null for empty space.
+        function cupAt(x, y, t) {
+          if (y <= 11.6) {
+            var ks = [-4.6, 0, 4.6];
+            for (var i = 0; i < ks.length; i++) {
+              var k = ks[i];
+              var xs = CX + k + 1.3 * Math.sin(y * 0.55 + k * 0.9 - t * 2.2);
+              if (Math.abs(x - xs) < 0.6) return { L: 0.56 - 0.26 * clamp((y - 1) / 10.6, 0, 1) };
+            }
+          }
+          var dx = (x - CX) / RIM_RX;
+          var dy = (y - RIM_Y) / RIM_RY;
+          var d = Math.sqrt(dx * dx + dy * dy);
+          if (d <= 1) {
+            if (d > 0.8) return { L: y < RIM_Y ? 0.98 : 0.62 };
+            return { L: 0.26 + 0.09 * Math.sin(x * 0.9 + t * 2.4) + 0.05 * Math.cos(y * 1.7 - t * 1.6) };
+          }
+          if (y >= RIM_Y && y <= 32) {
+            var hw = bodyHalf(y);
+            var ax = Math.abs(x - CX);
+            if (ax <= hw) {
+              var f = (x - (CX - hw)) / (2 * hw);
+              if (ax > hw - 0.65) return { L: f < 0.5 ? 1.0 : 0.2 };
+              var hl = 0.14 * Math.exp(-Math.pow((f - 0.22) / 0.07, 2));
+              return { L: clamp(0.92 - 0.62 * f - (0.12 * (y - RIM_Y)) / 16 + hl, 0, 1) };
+            }
+          }
+          var hr = Math.hypot(x - (CX + 9.2), y - 24);
+          if (hr >= 3.2 && hr <= 5.6 && x >= CX) {
+            return { L: clamp(0.8 - (0.45 * (y - 18.4)) / 11.2, 0.2, 0.85) };
+          }
+          var ex = (x - CX) / 16;
+          var ey = (y - SAU_Y) / 2.4;
+          var e = Math.sqrt(ex * ex + ey * ey);
+          if (e <= 1) {
+            if (e > 0.9) return { L: 0.22 };
+            if (y < SAU_Y - 0.6) return { L: 0.84 };
+            return { L: 0.5 - 0.12 * Math.abs(ex) };
+          }
+          return null;
+        }
+
+        function drawCup(t) {
+          for (var r = 0; r < ROWS; r++) {
+            for (var c = 0; c < COLS; c++) {
+              var idx = r * COLS + c;
+              var sp = cupSpans[idx];
+              var el = cupAt(c * 0.6 + 0.3, r + 0.5, t);
+              if (!el) {
+                if (sp.textContent !== " ") sp.textContent = " ";
+                continue;
+              }
+              var s = (t - cupRT[idx]) / 0.28;
+              if (s >= 1 || (s > 0 && hash(c, r, Math.floor(t * FPS)) < s)) {
+                sp.textContent = glyphFromL(el.L);
+                sp.style.color = colFromL(el.L);
+              } else {
+                var k = Math.floor(t * 12);
+                sp.textContent = RAMP.charAt(Math.floor(hash(c, r, k + 1000) * RAMP.length));
+                sp.style.color = colFromL(0.05 + 0.5 * hash(c, r, k + 77));
+              }
+            }
+          }
+        }
+
+        // ---- Copy ----
+        var lineEl = document.getElementById("line");
+        var nameEl = document.getElementById("name");
+        var decoEl = document.getElementById("deco");
+        var lineSpans = makeSpans(lineEl, LINE_TEXT);
+        var nameSpans = makeSpans(nameEl, NAME_TEXT);
+        var decoSpans = makeSpans(decoEl, RAMP);
+
+        function render(t) {
+          // Hero: decode in, then scramble out and fade by 1.85 s.
+          heroEl.style.opacity = t < 1.45 ? 1 : 1 - ease((t - 1.45) / 0.4);
+          decodeSpans(heroSpans, HERO_TEXT, t, function (i) {
+            return t >= 1.45 ? 1e9 : 0.12 + i * 0.075;
+          }, 0.3, function () { return INK; });
+
+          // Cup.
+          if (t >= 1.85) drawCup(t);
+
+          // Copy.
+          lineEl.style.opacity = t < 2.1 ? 0 : 1;
+          nameEl.style.opacity = t < 2.3 ? 0 : 1;
+          decoEl.style.opacity = t < 2.95 ? 0 : 1;
+          decodeSpans(lineSpans, LINE_TEXT, t, function (i) { return 2.1 + i * 0.012; }, 0.28, function () { return INK; });
+          decodeSpans(nameSpans, NAME_TEXT, t, function (i) { return 2.3 + i * 0.02; }, 0.28, function () { return GOLD; });
+          decodeSpans(decoSpans, RAMP, t, function (i) { return 2.95 + i * 0.03; }, 0.2, function (i) { return colFromL(i / 11); });
+
+          // Gentle float once the cup is in place.
+          cupEl.style.transform = t > 2.8 ? "translateY(" + (Math.sin((t - 2.8) * 1.6) * 5).toFixed(3) + "px)" : "none";
+        }
+
+        render(0);
+
+        var tl = gsap.timeline({ paused: true });
+        tl.to({}, { duration: 5, onUpdate: function () { render(tl.time()); } }, 0);
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+  </body>
+</html>

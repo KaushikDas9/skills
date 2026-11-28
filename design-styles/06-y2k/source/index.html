@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Unbounded Y2K";
+        src: url(assets/unbounded-900.woff2) format("woff2");
+        font-weight: 900;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Michroma Y2K";
+        src: url(assets/michroma-400.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Silkscreen Y2K";
+        src: url(assets/silkscreen-400.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Silkscreen Y2K";
+        src: url(assets/silkscreen-700.woff2) format("woff2");
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      :root {
+        --silver: #c9ced8;
+        --paper-top: #eef0f4;
+        --paper-bottom: #d9dee6;
+        --ink: #0a1633;
+        --grey: #5e6880;
+        --aqua: #1e6ff0;
+        --aqua-deep: #0d58d6;
+        --aqua-light: #7dc0ff;
+        --bondi: #0095b6;
+        --lime: #c8f53c;
+        --font-display: "Unbounded Y2K", sans-serif;
+        --font-tech: "Michroma Y2K", sans-serif;
+        --font-pixel: "Silkscreen Y2K", monospace;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper-bottom);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: radial-gradient(
+          ellipse at 50% 38%,
+          var(--paper-top) 0%,
+          var(--paper-bottom) 62%,
+          var(--silver) 100%
+        );
+        color: var(--ink);
+      }
+      .abs {
+        position: absolute;
+      }
+
+      /* Technical ground: grid, pinstripes, ruler, marks, barcode. All kept faint. */
+      #grid {
+        inset: 0;
+        background-image: linear-gradient(rgba(10, 22, 51, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(10, 22, 51, 0.05) 1px, transparent 1px);
+        background-size: 80px 80px;
+        background-position: 40px 40px;
+      }
+      #pins {
+        inset: 0;
+        opacity: 0.07;
+        background-image: repeating-linear-gradient(180deg, #ffffff 0px, #ffffff 2px, transparent 2px, transparent 4px);
+      }
+      #ruler {
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 28px;
+        border-bottom: 2px solid rgba(10, 22, 51, 0.12);
+        background-image: repeating-linear-gradient(90deg, rgba(10, 22, 51, 0.3) 0 1px, transparent 1px 16px);
+        background-size: 100% 9px;
+        background-position: left bottom;
+        background-repeat: no-repeat;
+      }
+      #ruler-major {
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 28px;
+        background-image: repeating-linear-gradient(90deg, rgba(10, 22, 51, 0.22) 0 1px, transparent 1px 80px);
+        background-size: 100% 28px;
+        background-repeat: no-repeat;
+      }
+      .mark {
+        width: 44px;
+        height: 44px;
+      }
+      #barcode {
+        left: 160px;
+        top: 990px;
+        width: 220px;
+        height: 46px;
+        opacity: 0.4;
+      }
+      #label {
+        right: 60px;
+        bottom: 36px;
+        font-family: var(--font-pixel);
+        font-weight: 700;
+        font-size: 30px;
+        letter-spacing: 0.12em;
+        color: var(--ink);
+        opacity: 0.85;
+      }
+
+      /* Soap bubbles with thin-film edges. */
+      .bub {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.55;
+        background: radial-gradient(
+            circle at 32% 28%,
+            rgba(255, 255, 255, 0.95) 0 5%,
+            transparent 9%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            transparent 60%,
+            rgba(125, 192, 255, 0.45) 72%,
+            rgba(255, 170, 225, 0.4) 82%,
+            rgba(160, 200, 255, 0.35) 92%,
+            transparent 100%
+          );
+      }
+
+      /* Chrome: sky above, bright horizon at 49/51%, dark ground below. */
+      .chrome {
+        background-image: linear-gradient(
+          180deg,
+          #0a1633 0%,
+          #2f58b8 28%,
+          #8fb4f2 46%,
+          #0a1633 50%,
+          #2b3550 68%,
+          #5a6680 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 4px 0 rgba(10, 22, 51, 0.3));
+      }
+
+      #hero-stack {
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 56px;
+      }
+      #hero-name {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 170px;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        white-space: nowrap;
+        padding: 0 20px;
+      }
+      #gel-track {
+        width: 900px;
+        height: 34px;
+        border-radius: 17px;
+        background: #d9dee6;
+        border: 2px solid rgba(94, 104, 128, 0.5);
+        box-shadow: inset 0 3px 6px rgba(10, 22, 51, 0.2);
+        overflow: hidden;
+        position: relative;
+      }
+      #gel-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        border-radius: 17px;
+        background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(255, 255, 255, 0.9) 46%,
+            rgba(255, 255, 255, 0) 46%
+          ),
+          linear-gradient(180deg, var(--aqua-light) 0%, var(--aqua) 45%, var(--aqua-deep) 55%, var(--bondi) 100%);
+      }
+
+      /* Aqua window frame with pinstripe title bar and traffic lights. */
+      #win-inner {
+        left: 160px;
+        top: 150px;
+        width: 1600px;
+        height: 780px;
+        border-radius: 14px;
+        box-shadow: 0 30px 60px rgba(10, 22, 51, 0.35), 0 0 0 2px rgba(10, 22, 51, 0.3);
+      }
+      #titlebar {
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 64px;
+        border-radius: 14px 14px 0 0;
+        background-image: repeating-linear-gradient(180deg, #eef0f4 0px, #eef0f4 2px, #c9ced8 2px, #c9ced8 4px);
+        border-bottom: 2px solid var(--grey);
+      }
+      .light {
+        position: absolute;
+        top: 22px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 1px solid rgba(10, 22, 51, 0.35);
+      }
+      #light-r {
+        left: 26px;
+        background: radial-gradient(circle at 35% 30%, #ffffff 0 12%, #e0443a 45%, #8f2620 100%);
+      }
+      #light-y {
+        left: 58px;
+        background: radial-gradient(circle at 35% 30%, #ffffff 0 12%, #f2b53a 45%, #91691a 100%);
+      }
+      #light-g {
+        left: 90px;
+        background: radial-gradient(circle at 35% 30%, #ffffff 0 12%, #4dba3f 45%, #2b6e24 100%);
+      }
+      #win-body {
+        left: 0;
+        right: 0;
+        top: 64px;
+        bottom: 0;
+        border-radius: 0 0 14px 14px;
+        overflow: hidden;
+        background: linear-gradient(180deg, #ffffff 0%, #eef0f4 45%, #d9dee6 100%);
+        border-left: 2px solid var(--grey);
+        border-right: 2px solid var(--grey);
+        border-bottom: 2px solid var(--grey);
+      }
+
+      #scene-b {
+        inset: 0;
+      }
+      #cup-svg {
+        left: 150px;
+        top: 128px;
+        width: 460px;
+        height: 440px;
+      }
+      .steam {
+        stroke-dasharray: 160;
+      }
+      #cup-text {
+        left: 700px;
+        top: 0;
+        bottom: 0;
+        width: 800px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 30px;
+      }
+      #badge {
+        width: 64px;
+        height: 64px;
+      }
+      #cup-line {
+        font-family: var(--font-tech);
+        font-size: 62px;
+        line-height: 1.2;
+        color: var(--ink);
+      }
+      .w {
+        display: inline-block;
+        white-space: pre;
+      }
+
+      #scene-c {
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 34px;
+      }
+      #scene-c .chrome {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 96px;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+        padding: 0 16px;
+      }
+      #headline {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 104px;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Background: static technical ground -->
+      <div id="bg" class="clip" data-start="0" data-duration="5" data-track-index="0">
+        <div id="grid" class="abs"></div>
+        <div id="pins" class="abs"></div>
+        <div id="ruler" class="abs"></div>
+        <div id="ruler-major" class="abs"></div>
+        <svg class="abs mark" style="left: 60px; top: 70px" viewBox="0 0 44 44" aria-hidden="true">
+          <circle cx="22" cy="22" r="12" fill="none" stroke="#0A1633" stroke-width="2" opacity="0.5" />
+          <path d="M22 2 V42 M2 22 H42" stroke="#0A1633" stroke-width="2" opacity="0.5" />
+        </svg>
+        <svg class="abs mark" style="left: 1816px; top: 70px" viewBox="0 0 44 44" aria-hidden="true">
+          <circle cx="22" cy="22" r="12" fill="none" stroke="#0A1633" stroke-width="2" opacity="0.5" />
+          <path d="M22 2 V42 M2 22 H42" stroke="#0A1633" stroke-width="2" opacity="0.5" />
+        </svg>
+        <svg id="barcode" class="abs" viewBox="0 0 220 46" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div id="label" class="abs">Y2K</div>
+      </div>
+
+      <!-- Soap bubbles behind the window -->
+      <div id="bubbles" class="clip" data-start="0" data-duration="5" data-track-index="1">
+        <div class="bub bub1" style="left: 90px; top: 230px; width: 150px; height: 150px"></div>
+        <div class="bub bub2" style="left: 1480px; top: 800px; width: 120px; height: 120px"></div>
+        <div class="bub bub3" style="left: 1800px; top: 300px; width: 84px; height: 84px"></div>
+      </div>
+
+      <!-- Hero: shop name in chrome, with a gel progress bar -->
+      <div id="hero" class="clip" data-start="0" data-duration="1.7" data-track-index="2">
+        <div id="hero-stack" class="abs">
+          <div id="hero-name" class="chrome">Lantern Bean</div>
+          <div id="gel-track">
+            <div id="gel-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aqua window: cup scene, then the greeting -->
+      <div id="win" class="clip" data-start="1.5" data-duration="3.5" data-track-index="3">
+        <div id="win-inner" class="abs">
+          <div id="titlebar" class="abs">
+            <div id="light-r" class="light"></div>
+            <div id="light-y" class="light"></div>
+            <div id="light-g" class="light"></div>
+          </div>
+          <div id="win-body" class="abs">
+            <div id="scene-b" class="abs">
+              <svg id="cup-svg" class="abs" viewBox="0 0 460 440" aria-label="Coffee cup">
+                <defs>
+                  <linearGradient id="mugG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#7DC0FF" />
+                    <stop offset="0.5" stop-color="#0095B6" />
+                    <stop offset="1" stop-color="#0D58D6" />
+                  </linearGradient>
+                  <linearGradient id="chromeG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#2A4FB8" />
+                    <stop offset="0.32" stop-color="#9DB6EE" />
+                    <stop offset="0.49" stop-color="#FFFFFF" />
+                    <stop offset="0.51" stop-color="#1A2236" />
+                    <stop offset="0.75" stop-color="#3B4458" />
+                    <stop offset="1" stop-color="#A9B3C6" />
+                  </linearGradient>
+                  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="5" />
+                  </filter>
+                </defs>
+                <!-- steam -->
+                <path class="steam" d="M170 118 C150 92 190 70 170 30" fill="none" stroke="#5E6880" stroke-width="7" stroke-linecap="round" opacity="0.55" />
+                <path class="steam" d="M220 110 C200 84 240 60 220 14" fill="none" stroke="#5E6880" stroke-width="7" stroke-linecap="round" opacity="0.55" />
+                <path class="steam" d="M270 118 C250 92 290 70 270 30" fill="none" stroke="#5E6880" stroke-width="7" stroke-linecap="round" opacity="0.55" />
+                <!-- saucer shadow and chrome saucer -->
+                <ellipse cx="222" cy="410" rx="190" ry="18" fill="#0A1633" opacity="0.28" filter="url(#soft)" />
+                <ellipse cx="220" cy="392" rx="200" ry="40" fill="url(#chromeG)" />
+                <!-- handle -->
+                <path d="M338 196 C412 184 420 300 330 302" fill="none" stroke="url(#chromeG)" stroke-width="26" stroke-linecap="round" />
+                <path d="M338 196 C412 184 420 300 330 302" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.6" />
+                <!-- jelly mug body -->
+                <path d="M96 150 L344 150 L326 332 Q322 370 286 370 L154 370 Q118 370 114 332 Z" fill="url(#mugG)" />
+                <!-- caustic light at the bottom -->
+                <ellipse cx="220" cy="346" rx="84" ry="12" fill="#7DC0FF" opacity="0.85" filter="url(#soft)" />
+                <!-- hard-edged window highlight, top left -->
+                <rect x="122" y="176" width="26" height="120" rx="4" fill="#FFFFFF" opacity="0.8" />
+                <rect x="158" y="176" width="8" height="60" rx="2" fill="#FFFFFF" opacity="0.5" />
+                <!-- rim and coffee -->
+                <ellipse cx="220" cy="150" rx="124" ry="22" fill="#FFFFFF" opacity="0.7" />
+                <ellipse cx="220" cy="152" rx="110" ry="18" fill="#4A2A1A" />
+                <ellipse cx="200" cy="148" rx="50" ry="6" fill="#FFFFFF" opacity="0.22" />
+              </svg>
+              <div id="cup-text" class="abs">
+                <svg id="badge" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="29" fill="#C8F53C" stroke="#0A1633" stroke-width="3" />
+                  <path d="M18 33 L28 43 L47 22" fill="none" stroke="#0A1633" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <div id="cup-line">
+                  <span class="w">Fresh </span><span class="w">coffee, </span><span class="w">every </span><span class="w">morning</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="scene-c" class="abs" style="opacity: 0">
+              <div class="chrome">Lantern Bean</div>
+              <div id="headline">
+                <span class="w">Come </span><span class="w">in, </span><span class="w">warm </span><span class="w">up.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Barcode: fixed bar pattern, no randomness.
+      (function () {
+        const svg = document.getElementById("barcode");
+        const widths = [2, 1, 1, 3, 1, 2, 2, 1, 3, 1, 1, 2, 3, 1, 2, 1, 1, 3, 2, 1, 1, 2, 2, 1, 3, 1];
+        let x = 0;
+        const parts = [];
+        widths.forEach((w, i) => {
+          if (i % 2 === 0) parts.push(`<rect x="${x}" y="0" width="${w}" height="46" fill="#0A1633"/>`);
+          x += w + 1.5;
+        });
+        svg.innerHTML = parts.join("");
+      })();
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Bubbles drift gently across the whole film.
+      tl.to(".bub1", { y: -22, duration: 2.5, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
+      tl.to(".bub2", { y: -16, duration: 2.5, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0.2);
+      tl.to(".bub3", { y: -12, duration: 2.5, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0.4);
+
+      // Hero: the name tightens into place with a spring landing, the gel bar fills.
+      tl.fromTo("#hero-name", { y: 36 }, { y: 0, duration: 0.6, ease: "back.out(1.4)" }, 0);
+      tl.fromTo("#gel-fill", { width: "0%" }, { width: "100%", duration: 0.95, ease: "power2.inOut" }, 0.25);
+      tl.to("#hero-stack", { opacity: 0, duration: 0.3, ease: "power2.in" }, 1.25);
+
+      // Window arrives at 1.5 s.
+      tl.fromTo("#win-inner", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.4)" }, 1.5);
+
+      // Cup scene 1.6 to 3.4 s.
+      tl.fromTo("#cup-svg", { y: 70, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "back.out(1.5)" }, 1.7);
+      tl.fromTo(".steam", { strokeDashoffset: 160 }, { strokeDashoffset: 0, duration: 0.8, ease: "power1.out", stagger: 0.12 }, 2.0);
+      tl.fromTo("#cup-line .w", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.36, ease: "power3.out", stagger: 0.09 }, 2.05);
+      tl.fromTo("#badge", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, 2.5);
+      tl.to("#scene-b", { opacity: 0, duration: 0.22, ease: "power2.in" }, 3.2);
+
+      // Greeting 3.4 to 4.4 s, then held to 5 s.
+      tl.to("#scene-c", { opacity: 1, duration: 0.1, ease: "none" }, 3.4);
+      tl.fromTo("#scene-c .chrome", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "back.out(1.5)" }, 3.45);
+      tl.fromTo("#headline .w", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", stagger: 0.09 }, 3.55);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

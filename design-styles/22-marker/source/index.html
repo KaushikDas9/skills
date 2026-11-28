@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Lantern Bean - Marker</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Permanent Marker";
+        src: url("assets/fonts/PermanentMarker-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      :root {
+        --ink: #2148a8;
+        --accent: #e4562c;
+        --paper: #faf3e7;
+        --yellow: #f2b01e;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #faf3e7;
+        overflow: hidden;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: "Permanent Marker", sans-serif;
+        color: var(--ink);
+      }
+      .abs {
+        position: absolute;
+      }
+      #art {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: visible;
+      }
+      .ink-stroke {
+        fill: none;
+        stroke: var(--ink);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 0;
+      }
+      .steam {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 14;
+        stroke-linecap: round;
+        stroke-dasharray: 1;
+      }
+      #saucer,
+      #bodyLine,
+      #handle,
+      .steam {
+        opacity: 0;
+      }
+      #label {
+        left: 64px;
+        top: 56px;
+        font-size: 40px;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+        opacity: 0;
+      }
+      #hero {
+        left: 0;
+        right: 0;
+        top: 250px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        font-size: 230px;
+        line-height: 1;
+        color: var(--ink);
+      }
+      #tagline {
+        left: 1080px;
+        top: 300px;
+        width: 760px;
+        font-size: 92px;
+        line-height: 1.08;
+        color: var(--ink);
+        clip-path: inset(0 100% 0 0);
+      }
+      #brand {
+        left: 1080px;
+        top: 640px;
+        font-size: 60px;
+        line-height: 1;
+        color: var(--accent);
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="5"
+    >
+      <div id="label" class="abs">Marker</div>
+
+      <div id="hero" class="abs">Lantern Bean</div>
+
+      <svg id="art" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="mk" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="warp" />
+            <feDisplacementMap in="SourceGraphic" in2="warp" scale="7" xChannelSelector="R" yChannelSelector="G" result="wob" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.015 0.7" numOctaves="2" seed="8" result="streak" />
+            <feColorMatrix
+              in="streak"
+              type="matrix"
+              values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.8 0 0 0 0.05"
+              result="streakA"
+            />
+            <feComposite in="wob" in2="streakA" operator="in" />
+          </filter>
+          <filter id="mkLine" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="5" result="warp" />
+            <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+
+        <!-- underline under the hero name -->
+        <mask id="ulMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
+          <rect id="ulRect" x="280" y="560" width="0" height="180" fill="#fff" />
+        </mask>
+        <path
+          id="underline"
+          d="M300 640 C700 610 1200 672 1620 628"
+          fill="none"
+          stroke="#E4562C"
+          stroke-width="26"
+          stroke-linecap="round"
+          mask="url(#ulMask)"
+          filter="url(#mkLine)"
+        />
+
+        <g transform="translate(-67.2 -20) scale(1.12)">
+        <g id="cup">
+          <!-- saucer: yellow wash, then ink outline -->
+          <path
+            id="saucerFill"
+            d="M250 738 A310 42 0 1 0 870 738 A310 42 0 1 0 250 738 Z"
+            fill="#F2B01E"
+            opacity="0"
+            style="mix-blend-mode: multiply"
+            filter="url(#mk)"
+          />
+          <path
+            id="saucer"
+            class="ink-stroke"
+            pathLength="1"
+            d="M250 738 A310 42 0 1 0 870 738 A310 42 0 1 0 250 738 Z"
+            stroke-width="22"
+            filter="url(#mkLine)"
+          />
+
+          <!-- body: accent wash, then ink outline -->
+          <path
+            id="bodyFill"
+            d="M360 400 L760 400 L730 690 Q725 722 690 722 L430 722 Q395 722 390 690 Z"
+            fill="#E4562C"
+            opacity="0"
+            style="mix-blend-mode: multiply"
+            filter="url(#mk)"
+          />
+          <path
+            id="bodyLine"
+            class="ink-stroke"
+            pathLength="1"
+            d="M360 400 L760 400 L730 690 Q725 722 690 722 L430 722 Q395 722 390 690 Z"
+            stroke-width="24"
+            filter="url(#mkLine)"
+          />
+
+          <!-- handle, attached to the body's right side -->
+          <path
+            id="handle"
+            class="ink-stroke"
+            pathLength="1"
+            d="M752 452 C858 428 896 524 866 580 C846 618 806 628 742 626"
+            stroke-width="24"
+            filter="url(#mkLine)"
+          />
+
+          <!-- steam above the mouth -->
+          <g id="steam" filter="url(#mkLine)">
+            <path class="steam" pathLength="1" d="M470 352 C436 302 504 270 470 212" />
+            <path class="steam" pathLength="1" d="M560 342 C526 292 594 258 560 188" />
+            <path class="steam" pathLength="1" d="M650 352 C616 302 684 270 650 212" />
+          </g>
+        </g>
+        </g>
+      </svg>
+
+      <div id="tagline" class="abs">Fresh coffee, every morning</div>
+      <div id="brand" class="abs">Lantern Bean</div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // 0.0 - 1.8 s: hero name
+      tl.fromTo("#label", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 0);
+      tl.fromTo(
+        "#hero",
+        { clipPath: "inset(0 100% 0 0)" },
+        { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out" },
+        0
+      );
+      tl.fromTo("#ulRect", { attr: { width: 0 } }, { attr: { width: 1340 }, duration: 0.5, ease: "power1.inOut" }, 0.5);
+      tl.to("#hero, #underline", { opacity: 0, y: -30, duration: 0.25, ease: "power2.in" }, 1.55);
+
+      // 1.8 - 2.8 s: cup draws in, text arrives
+      tl.set("#saucer", { opacity: 1 }, 1.8);
+      tl.fromTo("#saucer", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.45, ease: "power1.inOut" }, 1.8);
+      tl.fromTo("#saucerFill", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 2.1);
+      tl.set("#bodyLine", { opacity: 1 }, 1.95);
+      tl.fromTo("#bodyLine", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, ease: "power1.inOut" }, 1.95);
+      tl.fromTo("#bodyFill", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 2.3);
+      tl.set("#handle", { opacity: 1 }, 2.3);
+      tl.fromTo("#handle", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.4, ease: "power1.inOut" }, 2.3);
+      tl.set(".steam", { opacity: 1 }, 2.4);
+      tl.fromTo(".steam", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.4, ease: "power1.inOut", stagger: 0.1 }, 2.4);
+      tl.fromTo(
+        "#tagline",
+        { clipPath: "inset(0 100% 0 0)" },
+        { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out" },
+        2.0
+      );
+      tl.fromTo("#brand", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4, ease: "power1.out" }, 2.45);
+
+      // 2.8 - 5.0 s: held, gentle movement only
+      tl.to(".steam", { y: -10, duration: 0.5, yoyo: true, repeat: 2, ease: "sine.inOut" }, 2.8);
+      tl.to("#cup", { y: -8, duration: 1.0, yoyo: true, repeat: 1, ease: "sine.inOut" }, 2.9);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

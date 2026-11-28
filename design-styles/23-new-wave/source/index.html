@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "NW Display";
+        src: url("assets/archivo-latin-900-normal.woff2") format("woff2");
+        font-weight: 900;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "NW Display";
+        src: url("assets/archivo-latin-800-normal.woff2") format("woff2");
+        font-weight: 800;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "NW Mono";
+        src: url("assets/space-mono-latin-400-normal.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "NW Mono";
+        src: url("assets/space-mono-latin-700-normal.woff2") format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: block;
+      }
+
+      :root {
+        --paper: #e6e2da;
+        --ink: #141414;
+        --magenta: #ec1c8c;
+        --cyan: #12a8d8;
+        --yellow: #ffd21f;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "NW Display", sans-serif;
+      }
+      /* Paper grain */
+      #grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.09;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+      }
+      /* 12-column grid guides, 120px margins, 140px columns */
+      #grid {
+        position: absolute;
+        left: 120px;
+        top: 0;
+        width: 1680px;
+        height: 1080px;
+        background: repeating-linear-gradient(90deg, rgba(20, 20, 20, 0.14) 0 1px, transparent 1px 140px);
+        border-right: 1px solid rgba(20, 20, 20, 0.14);
+      }
+      .sheet {
+        position: absolute;
+        mix-blend-mode: multiply;
+      }
+      .abs {
+        position: absolute;
+      }
+      /* Halftone: a dot grid rotated 45 degrees; the outer node is tweened, the inner node is rotated */
+      .halftone {
+        position: absolute;
+        overflow: hidden;
+      }
+      .halftone > div {
+        position: absolute;
+        left: -50%;
+        top: -50%;
+        width: 200%;
+        height: 200%;
+        transform: rotate(45deg);
+      }
+      .hero {
+        position: absolute;
+        left: 150px;
+        top: 372px;
+        white-space: nowrap;
+        font-family: "NW Display", sans-serif;
+        font-weight: 900;
+        font-size: 210px;
+        line-height: 1;
+        letter-spacing: 0.01em;
+        color: var(--ink);
+      }
+      .hchar {
+        display: inline-block;
+      }
+      .dotted {
+        position: absolute;
+        left: 150px;
+        top: 586px;
+        width: 850px;
+        height: 0;
+        border-top: 3px dotted var(--ink);
+      }
+      .label {
+        position: absolute;
+        left: 120px;
+        top: 96px;
+        font-family: "NW Mono", monospace;
+        font-weight: 400;
+        font-size: 28px;
+        letter-spacing: 0.2em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .cross {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+      }
+      .cross::before,
+      .cross::after {
+        content: "";
+        position: absolute;
+        background: var(--ink);
+      }
+      .cross::before {
+        left: 0;
+        top: 17px;
+        width: 36px;
+        height: 2px;
+      }
+      .cross::after {
+        left: 17px;
+        top: 0;
+        width: 2px;
+        height: 36px;
+      }
+      .circle-ring {
+        position: absolute;
+        border-radius: 50%;
+      }
+      #headline {
+        position: absolute;
+        left: 960px;
+        top: 330px;
+        font-family: "NW Display", sans-serif;
+        font-weight: 900;
+        font-size: 104px;
+        line-height: 0.98;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .line {
+        display: block;
+      }
+      .step {
+        display: inline-block;
+        position: relative;
+      }
+      .hw {
+        display: inline-block;
+      }
+      #name {
+        position: absolute;
+        left: 966px;
+        top: 688px;
+        font-family: "NW Mono", monospace;
+        font-weight: 700;
+        font-size: 44px;
+        letter-spacing: 0.14em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .nchar {
+        display: inline-block;
+      }
+      #rule {
+        position: absolute;
+        left: 966px;
+        top: 664px;
+        width: 260px;
+        height: 10px;
+        background: var(--magenta);
+      }
+      .steam {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 9;
+        stroke-linecap: round;
+        stroke-dasharray: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Static paper layer -->
+      <div id="grain"></div>
+      <div id="grid"></div>
+      <div class="cross" style="left: 120px; top: 980px"></div>
+      <div class="cross" style="left: 1764px; top: 78px"></div>
+
+      <!-- Style label, whole video -->
+      <div id="label" class="label clip" data-start="0" data-duration="5" data-track-index="3">New Wave</div>
+
+      <!-- Scene 1: hero, 0.0 - 1.8 s -->
+      <div id="sceneA" class="clip" data-start="0" data-duration="1.8" data-track-index="0">
+        <div id="sheetMag" class="sheet" style="left: 1080px; top: 0px; width: 840px; height: 340px; background: var(--magenta)"></div>
+        <div id="sheetCyan" class="sheet circle-ring" style="left: 1190px; top: 590px; width: 620px; height: 620px; background: var(--cyan)"></div>
+        <div id="sheetYellow" class="sheet" style="left: 700px; top: 760px; width: 1220px; height: 320px; background: var(--yellow); clip-path: polygon(0 100%, 100% 22%, 100% 100%)"></div>
+        <div class="dotted"></div>
+        <div id="hero" class="hero">
+          <span class="hchar">L</span><span class="hchar">a</span><span class="hchar">n</span><span class="hchar">t</span><span class="hchar">e</span><span class="hchar">r</span><span class="hchar">n</span><span class="hchar">&nbsp;</span><span class="hchar">B</span><span class="hchar">e</span><span class="hchar">a</span><span class="hchar">n</span>
+        </div>
+      </div>
+
+      <!-- Scene 2: cup and line, 1.8 - 5.0 s -->
+      <div id="sceneB" class="clip" data-start="1.8" data-duration="3.2" data-track-index="1">
+        <div id="bgCircle" class="sheet circle-ring" style="left: 128px; top: 250px; width: 620px; height: 620px; background: var(--yellow)"></div>
+        <div id="htBlock" class="halftone" style="left: 1560px; top: 700px; width: 360px; height: 380px">
+          <div id="htInner" data-layout-allow-overflow style="background: radial-gradient(circle, var(--magenta) 34%, transparent 37%) 0 0 / 22px 22px"></div>
+        </div>
+
+        <svg
+          id="cup"
+          class="abs"
+          style="left: 80px; top: 110px"
+          width="753"
+          height="860"
+          viewBox="100 60 420 480"
+          overflow="visible"
+        >
+          <defs>
+            <clipPath id="bodyClip">
+              <path d="M170 300 L430 300 C430 430 390 500 300 500 C210 500 170 430 170 300 Z" />
+            </clipPath>
+            <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <circle cx="6" cy="6" r="2.8" fill="#141414" />
+            </pattern>
+          </defs>
+
+          <!-- saucer, centred under the cup -->
+          <g id="saucerG">
+            <ellipse cx="300" cy="530" rx="200" ry="36" fill="#ec1c8c" stroke="#141414" stroke-width="6" />
+            <ellipse cx="300" cy="530" rx="120" ry="15" fill="none" stroke="#141414" stroke-width="4" />
+          </g>
+
+          <!-- steam above the mouth -->
+          <g id="steamG">
+            <path class="steam" pathLength="1" d="M250 240 C232 214 268 196 250 166 C232 136 268 118 250 92" />
+            <path class="steam" pathLength="1" d="M300 236 C282 210 318 192 300 162 C282 132 318 114 300 88" />
+            <path class="steam" pathLength="1" d="M350 240 C332 214 368 196 350 166 C332 136 368 118 350 92" />
+          </g>
+
+          <!-- cup: handle first, so its ends sit under the body and attach to it -->
+          <g id="cupBody">
+            <path
+              d="M415 340 C490 325 520 400 486 440 C462 468 420 455 395 432"
+              fill="none"
+              stroke="#141414"
+              stroke-width="30"
+              stroke-linecap="round"
+            />
+            <path
+              d="M170 300 L430 300 C430 430 390 500 300 500 C210 500 170 430 170 300 Z"
+              fill="#12a8d8"
+            />
+            <rect x="300" y="300" width="140" height="210" fill="url(#dots)" clip-path="url(#bodyClip)" />
+            <path
+              d="M170 300 L430 300 C430 430 390 500 300 500 C210 500 170 430 170 300 Z"
+              fill="none"
+              stroke="#141414"
+              stroke-width="6"
+              stroke-linejoin="round"
+            />
+            <ellipse cx="300" cy="300" rx="130" ry="26" fill="#141414" stroke="#141414" stroke-width="6" />
+          </g>
+        </svg>
+
+        <div id="headline">
+          <div class="line"><span class="step" style="top: 0em"><span class="hw">Fresh</span></span> <span class="step" style="top: 0.18em"><span class="hw">coffee,</span></span></div>
+          <div class="line"><span class="step" style="top: 0.36em"><span class="hw">every</span></span> <span class="step" style="top: 0.54em"><span class="hw">morning</span></span></div>
+        </div>
+        <div id="rule"></div>
+        <div id="name"><span class="nchar">L</span><span class="nchar">a</span><span class="nchar">n</span><span class="nchar">t</span><span class="nchar">e</span><span class="nchar">r</span><span class="nchar">n</span><span class="nchar">&nbsp;</span><span class="nchar">B</span><span class="nchar">e</span><span class="nchar">a</span><span class="nchar">n</span></div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // ---- Scene 1: hero, 0.0 - 1.8 s ----
+      tl.fromTo("#sheetMag", { x: -420 }, { x: 0, duration: 0.6, ease: "power3.out" }, 0);
+      tl.fromTo("#sheetCyan", { x: 260 }, { x: 0, duration: 0.7, ease: "power3.out" }, 0.1);
+      tl.fromTo("#sheetYellow", { y: 320 }, { y: 0, duration: 0.6, ease: "power3.out" }, 0.2);
+      // letters drop by a quarter of their height, one after another
+      tl.fromTo(".hchar", { y: "-0.25em" }, { y: 0, duration: 0.5, ease: "power3.out", stagger: 0.035 }, 0.1);
+      // tracking: overlap to open spacing
+      tl.fromTo(".hchar", { x: (i) => -i * 14.7 }, { x: 0, duration: 1.1, ease: "power2.inOut" }, 0);
+      // exit
+      tl.to(".hchar", { y: "-3em", duration: 0.3, ease: "power3.in", stagger: 0.012 }, 1.3);
+      tl.to("#sheetMag", { x: -700, duration: 0.4, ease: "power2.in" }, 1.4);
+      tl.to("#sheetCyan", { x: 700, duration: 0.4, ease: "power2.in" }, 1.4);
+      tl.to("#sheetYellow", { y: 400, duration: 0.4, ease: "power2.in" }, 1.4);
+
+      // ---- Scene 2: cup and line, 1.8 - 5.0 s ----
+      tl.fromTo("#bgCircle", { x: -120 }, { x: 0, duration: 0.7, ease: "power3.out" }, 1.8);
+      tl.fromTo("#htBlock", { y: 200 }, { y: 0, duration: 0.7, ease: "power3.out" }, 1.9);
+      tl.fromTo("#saucerG", { y: 90 }, { y: 0, duration: 0.5, ease: "power3.out" }, 1.95);
+      tl.fromTo("#cupBody", { y: 140 }, { y: 0, duration: 0.6, ease: "power3.out" }, 2.05);
+      tl.fromTo(".steam", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: "power1.out", stagger: 0.08 }, 2.35);
+      // headline: words step down the grid, all in place by 2.8 s
+      tl.fromTo(".hw", { y: "-0.4em", opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out", stagger: 0.1 }, 2.0);
+      tl.fromTo("#rule", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out", transformOrigin: "0% 50%" }, 2.45);
+      tl.fromTo("#name", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 2.45);
+      tl.fromTo(".nchar", { x: (i) => -i * 5.3 }, { x: 0, duration: 0.9, ease: "power2.out" }, 2.45);
+
+      // hold: gentle movement only, ends at 5.0 s
+      tl.to("#cup", { y: -10, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+      tl.to("#htInner", { x: 30, duration: 2.2, ease: "sine.inOut" }, 2.8);
+      tl.to("#steamG", { x: 4, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.9);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

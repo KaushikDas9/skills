@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Fredoka Plush";
+        src: url("assets/fredoka-600.woff2") format("woff2");
+        font-weight: 600;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Fredoka Plush";
+        src: url("assets/fredoka-400.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: block;
+      }
+      :root {
+        --root: #7d0a3c;
+        --tip: #ff4f97;
+        --accent: #7b52ff;
+        --ground: #fff1e0;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 34% 56%, rgba(255, 79, 151, 0.22) 0%, rgba(255, 79, 151, 0) 46%),
+          radial-gradient(circle at 92% 12%, rgba(123, 82, 255, 0.14) 0%, rgba(123, 82, 255, 0) 40%),
+          var(--ground);
+        font-family: "Fredoka Plush", sans-serif;
+        color: var(--root);
+      }
+      #label {
+        position: absolute;
+        left: 64px;
+        top: 64px;
+        padding: 14px 30px 12px;
+        border-radius: 999px;
+        background: var(--root);
+        color: var(--ground);
+        font-size: 30px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        line-height: 1;
+      }
+      #hero {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: url(#fuzz);
+      }
+      #hero-name {
+        font-size: 214px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1;
+        white-space: nowrap;
+        color: var(--root);
+      }
+      .hero-letter {
+        display: inline-block;
+        transform-origin: 50% 100%;
+      }
+      #cupWrap {
+        position: absolute;
+        left: 150px;
+        top: 160px;
+        width: 760px;
+        height: 760px;
+        transform-origin: 50% 100%;
+      }
+      #cupSvg {
+        display: block;
+        overflow: visible;
+      }
+      #copy {
+        position: absolute;
+        left: 1040px;
+        top: 372px;
+        width: 840px;
+      }
+      #line1,
+      #line2 {
+        font-size: 104px;
+        font-weight: 600;
+        line-height: 1.04;
+        letter-spacing: -0.01em;
+        color: var(--root);
+        white-space: nowrap;
+      }
+      #name {
+        margin-top: 34px;
+        font-size: 60px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: 0.01em;
+        color: var(--accent);
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <filter id="fuzz" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+
+    <div
+      id="root"
+      class="clip"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="label">Plush</div>
+
+      <div id="hero">
+        <div id="hero-name">
+          <span class="hero-letter">L</span><span class="hero-letter">a</span><span class="hero-letter">n</span><span
+            class="hero-letter"
+            >t</span
+          ><span class="hero-letter">e</span><span class="hero-letter">r</span><span class="hero-letter">n</span>
+          <span class="hero-letter">&nbsp;</span><span class="hero-letter">B</span><span class="hero-letter">e</span><span
+            class="hero-letter"
+            >a</span
+          ><span class="hero-letter">n</span>
+        </div>
+      </div>
+
+      <div id="cupWrap">
+        <svg id="cupSvg" viewBox="0 0 600 600" width="760" height="760">
+          <defs>
+            <radialGradient id="gBody" cx="35%" cy="30%" r="75%">
+              <stop offset="0" stop-color="#ff6fa8" />
+              <stop offset="0.6" stop-color="#b8245f" />
+              <stop offset="1" stop-color="#7d0a3c" />
+            </radialGradient>
+            <linearGradient id="gPink" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ff6fa8" />
+              <stop offset="1" stop-color="#7d0a3c" />
+            </linearGradient>
+            <radialGradient id="gViolet" cx="40%" cy="35%" r="70%">
+              <stop offset="0" stop-color="#a48bff" />
+              <stop offset="0.6" stop-color="#7b52ff" />
+              <stop offset="1" stop-color="#4b2fc2" />
+            </radialGradient>
+          </defs>
+
+          <g id="saucerG">
+            <ellipse cx="300" cy="470" rx="236" ry="44" fill="url(#gViolet)" />
+            <path
+              id="saucerPath"
+              d="M64,470 A236,44 0 1,0 536,470 A236,44 0 1,0 64,470"
+              fill="none"
+              stroke="none"
+            />
+            <g id="saucerFur"></g>
+          </g>
+
+          <g id="cupG">
+            <path
+              id="handlePath"
+              d="M372,206 C470,186 498,306 372,346"
+              fill="none"
+              stroke="url(#gPink)"
+              stroke-width="40"
+              stroke-linecap="round"
+            />
+            <path
+              id="bodyPath"
+              d="M130,172 L390,172 C392,300 384,380 360,428 Q352,452 320,454 L200,454 Q168,452 160,428 C136,380 128,300 130,172 Z"
+              fill="url(#gBody)"
+            />
+            <path
+              d="M150,430 C138,380 134,300 136,206"
+              fill="none"
+              stroke="#fff1e0"
+              stroke-opacity="0.55"
+              stroke-width="6"
+              stroke-linecap="round"
+            />
+            <ellipse cx="260" cy="172" rx="130" ry="28" fill="#5a0526" />
+            <ellipse cx="260" cy="177" rx="112" ry="16" fill="#6b2a1a" />
+            <g id="steamG" opacity="0"></g>
+            <g id="furBody"></g>
+          </g>
+        </svg>
+      </div>
+
+      <div id="copy">
+        <div id="line1">Fresh coffee,</div>
+        <div id="line2">every morning</div>
+        <div id="name">Lantern Bean</div>
+      </div>
+    </div>
+
+    <script>
+      // ---- seeded random so every render is identical ----
+      function rng(seed) {
+        return function () {
+          seed |= 0;
+          seed = (seed + 0x6d2b79f5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      const R = rng(20250);
+      const NS = "http://www.w3.org/2000/svg";
+      const LIGHT = "#ffb3d1";
+      const DARK = "#7d0a3c";
+
+      function el(tag, attrs, parent) {
+        const e = document.createElementNS(NS, tag);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        parent.appendChild(e);
+        return e;
+      }
+
+      function strand(parent, x, y, dx, dy, len, w, color, bend) {
+        const n = Math.hypot(dx, dy) || 1;
+        dx /= n;
+        dy /= n;
+        const x2 = x + dx * len;
+        const y2 = y + dy * len;
+        const cx = x + dx * len * 0.5 + (R() - 0.5) * bend;
+        const cy = y + dy * len * 0.5 + (R() - 0.5) * bend;
+        el(
+          "path",
+          {
+            d: `M${x.toFixed(2)},${y.toFixed(2)} Q${cx.toFixed(2)},${cy.toFixed(2)} ${x2.toFixed(2)},${y2.toFixed(2)}`,
+            stroke: color,
+            "stroke-width": w.toFixed(2),
+            "stroke-linecap": "round",
+            fill: "none",
+          },
+          parent,
+        );
+      }
+
+      // Fur along the outline of a shape: strands leave the edge, pointing outward.
+      function furAlong(path, parent, count, o) {
+        const total = path.getTotalLength();
+        for (let i = 0; i < count; i++) {
+          const s = R() * total;
+          const p = path.getPointAtLength(s);
+          if (o.skipY && p.y < o.skipY) continue;
+          const a = path.getPointAtLength(Math.max(0, s - 1.5));
+          const b = path.getPointAtLength(Math.min(total, s + 1.5));
+          let tx = b.x - a.x;
+          let ty = b.y - a.y;
+          const tn = Math.hypot(tx, ty) || 1;
+          tx /= tn;
+          ty /= tn;
+          let nx = -ty;
+          let ny = tx;
+          if ((p.x - o.c.x) * nx + (p.y - o.c.y) * ny < 0) {
+            nx = -nx;
+            ny = -ny;
+          }
+          const sp = o.spread;
+          const dx = nx + (R() - 0.5) * sp;
+          const dy = ny + (R() - 0.5) * sp + (o.down || 0);
+          const len = o.lenMin + R() * (o.lenMax - o.lenMin);
+          const color = R() < o.light ? LIGHT : DARK;
+          strand(parent, p.x, p.y, dx, dy, len, o.w * (0.7 + R() * 0.6), color, o.bend || 6);
+        }
+      }
+
+      // Fur inside a filled shape: short strands that lean down and out.
+      function furInside(shape, parent, count, o) {
+        let made = 0;
+        let guard = 0;
+        while (made < count && guard < 20000) {
+          guard++;
+          const x = o.box.x + R() * o.box.w;
+          const y = o.box.y + R() * o.box.h;
+          if (y < o.skipY) continue;
+          if (!shape.isPointInFill(new DOMPoint(x, y))) continue;
+          const dx = (x - o.c.x) * 0.012 + (R() - 0.5) * 0.9;
+          const dy = 0.7 + (R() - 0.5) * 0.7;
+          const len = o.lenMin + R() * (o.lenMax - o.lenMin);
+          const color = R() < o.light ? LIGHT : DARK;
+          strand(parent, x, y, dx, dy, len, o.w * (0.7 + R() * 0.6), color, 4);
+          made++;
+        }
+      }
+
+      // ---- saucer ----
+      const saucerFur = document.getElementById("saucerFur");
+      const saucerPath = document.getElementById("saucerPath");
+      furAlong(saucerPath, saucerFur, 420, {
+        c: { x: 300, y: 470 },
+        spread: 0.9,
+        down: 0.25,
+        lenMin: 9,
+        lenMax: 20,
+        w: 3.2,
+        light: 0.35,
+      });
+
+      // ---- handle (behind body) ----
+      const furBody = document.getElementById("furBody");
+      const handlePath = document.getElementById("handlePath");
+      furAlong(handlePath, furBody, 520, {
+        c: { x: 262, y: 300 },
+        spread: 0.8,
+        lenMin: 10,
+        lenMax: 24,
+        w: 3.8,
+        light: 0.4,
+      });
+
+      // ---- body ----
+      const bodyPath = document.getElementById("bodyPath");
+      furAlong(bodyPath, furBody, 620, {
+        c: { x: 260, y: 300 },
+        spread: 0.8,
+        lenMin: 10,
+        lenMax: 24,
+        w: 3.6,
+        light: 0.45,
+        skipY: 190,
+      });
+      furInside(bodyPath, furBody, 1500, {
+        box: { x: 130, y: 190, w: 262, h: 266 },
+        c: { x: 260, y: 300 },
+        skipY: 190,
+        lenMin: 10,
+        lenMax: 20,
+        w: 2.6,
+        light: 0.5,
+      });
+
+      // ---- steam: three soft wisps rising from the mouth ----
+      const steamG = document.getElementById("steamG");
+      const steamPaths = [];
+      [-46, 0, 46].forEach((dx, i) => {
+        const x = 260 + dx;
+        const d = `M${x - 4},150 C${x - 30},124 ${x + 18},104 ${x - 6},72 C${x - 22},50 ${x + 10},34 ${x - 2},14`;
+        const p = el(
+          "path",
+          { d, fill: "none", stroke: "#ff9cc4", "stroke-width": 9, "stroke-linecap": "round", id: "steam" + i },
+          steamG,
+        );
+        steamPaths.push(p);
+        furAlong(p, steamG, 140, {
+          c: { x: x - 6, y: 90 },
+          spread: 1.4,
+          lenMin: 8,
+          lenMax: 16,
+          w: 2.2,
+          light: 0.5,
+          bend: 8,
+        });
+      });
+
+      // ---- text and hero motion ----
+      const heroLetters = document.querySelectorAll(".hero-letter");
+
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set("#cupWrap", { transformOrigin: "50% 100%" });
+      gsap.set("#saucerG, #cupG, #furBody, #steamG", { transformOrigin: "50% 50%" });
+      gsap.set("#cupG", { transformOrigin: "50% 100%" });
+      gsap.set("#furBody", { transformOrigin: "50% 100%" });
+      steamPaths.forEach((p) => {
+        const L = p.getTotalLength();
+        gsap.set(p, { strokeDasharray: L, strokeDashoffset: L });
+      });
+
+      // Hero: letters squash in from the floor and spring to shape (visible at t=0).
+      tl.fromTo(
+        heroLetters,
+        { y: 70, scaleX: 1.25, scaleY: 0.5, opacity: 1 },
+        { y: 0, scaleX: 1, scaleY: 1, duration: 0.7, ease: "back.out(1.6)", stagger: 0.05 },
+        0,
+      );
+      // Hero leaves with a soft lift.
+      tl.to("#hero", { y: -130, opacity: 0, duration: 0.4, ease: "power2.in" }, 1.5);
+
+      // Cup: squash-drop with spring settle, saucer first, body after.
+      tl.fromTo(
+        "#saucerG",
+        { opacity: 0, scaleX: 0.6 },
+        { opacity: 1, scaleX: 1, duration: 0.5, ease: "back.out(1.5)" },
+        1.8,
+      );
+      tl.fromTo(
+        "#cupWrap",
+        { y: 120, opacity: 0, scaleX: 1.12, scaleY: 0.7 },
+        { y: 0, opacity: 1, scaleX: 1, scaleY: 1, duration: 0.9, ease: "elastic.out(1, 0.5)" },
+        1.85,
+      );
+      tl.fromTo("#steamG", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 2.25);
+      steamPaths.forEach((p, i) => {
+        tl.to(p, { strokeDashoffset: 0, duration: 0.8, ease: "power2.out" }, 2.25 + i * 0.08);
+      });
+
+      // Copy: enters in order, all in place by 2.8 s.
+      tl.fromTo("#line1", { x: 90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 2.15);
+      tl.fromTo("#line2", { x: 90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 2.25);
+      tl.fromTo("#name", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 2.4);
+
+      // Hold: gentle sway, a fur lag that overshoots and settles, and one press with recovery.
+      tl.to("#cupWrap", { y: -12, duration: 1.0, ease: "sine.inOut" }, 2.9);
+      tl.to("#cupWrap", { y: 0, duration: 1.0, ease: "sine.inOut" }, 3.9);
+      tl.to("#furBody", { rotation: 3, duration: 0.6, ease: "sine.inOut" }, 2.95);
+      tl.to("#furBody", { rotation: -2, duration: 0.45, ease: "sine.inOut" }, 3.55);
+      tl.to("#furBody", { rotation: 0, duration: 1.0, ease: "elastic.out(1, 0.3)" }, 4.0);
+      tl.to("#cupWrap", { scaleX: 1.04, scaleY: 0.93, duration: 0.12, ease: "power2.out" }, 3.6);
+      tl.to("#cupWrap", { scaleX: 1, scaleY: 1, duration: 0.9, ease: "elastic.out(1, 0.35)" }, 3.72);
+      tl.to("#steamG", { y: -10, duration: 1.0, ease: "sine.inOut" }, 3.0);
+      tl.to("#steamG", { y: 0, duration: 0.9, ease: "sine.inOut" }, 4.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lantern Bean - Liquid Chrome</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Space Grotesk";
+        src: url("assets/space-grotesk-latin-400-normal.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Space Grotesk";
+        src: url("assets/space-grotesk-latin-600-normal.woff2") format("woff2");
+        font-weight: 600;
+        font-style: normal;
+      }
+      :root {
+        --ground: #090e18;
+        --ink: #f5f5f2;
+        --accent: #ed80b8;
+        --font-display: "Space Grotesk", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse 900px 620px at 50% 50%, #14203a 0%, rgba(9, 14, 24, 0) 70%),
+          var(--ground);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      .layer {
+        position: absolute;
+        inset: 0;
+      }
+      #hero {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #heroText {
+        font-size: 236px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        white-space: nowrap;
+        color: var(--ink);
+      }
+      #copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-left: 1010px;
+      }
+      #headline {
+        font-size: 92px;
+        font-weight: 600;
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        max-width: 780px;
+        color: var(--ink);
+      }
+      #brandSmall {
+        margin-top: 48px;
+        font-size: 48px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--accent);
+      }
+      #label {
+        position: absolute;
+        right: 72px;
+        top: 72px;
+        padding: 12px 22px;
+        border: 1px solid rgba(245, 245, 242, 0.35);
+        border-radius: 999px;
+        background: var(--ground);
+        font-size: 28px;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Liquid chrome ribbons: top and bottom only, the centre stays dark for text -->
+      <svg
+        id="liquid"
+        class="clip layer"
+        data-layout-allow-overflow
+        data-start="0"
+        data-duration="5"
+        data-track-index="0"
+        width="1920"
+        height="1080"
+        viewBox="0 0 1920 1080"
+      >
+        <defs>
+          <linearGradient id="chromeG" gradientUnits="userSpaceOnUse" x1="-1200" y1="0" x2="720" y2="0">
+            <stop offset="0" stop-color="#0a1020" />
+            <stop offset="0.16" stop-color="#3c6fd1" />
+            <stop offset="0.3" stop-color="#f5f5f2" />
+            <stop offset="0.44" stop-color="#ed80b8" />
+            <stop offset="0.58" stop-color="#15102a" />
+            <stop offset="0.72" stop-color="#f5f5f2" />
+            <stop offset="0.86" stop-color="#3c6fd1" />
+            <stop offset="1" stop-color="#090e18" />
+          </linearGradient>
+          <linearGradient id="cupG" gradientUnits="userSpaceOnUse" x1="300" y1="0" x2="900" y2="0">
+            <stop offset="0" stop-color="#3c6fd1" />
+            <stop offset="0.25" stop-color="#f5f5f2" />
+            <stop offset="0.5" stop-color="#ed80b8" />
+            <stop offset="0.75" stop-color="#f5f5f2" />
+            <stop offset="1" stop-color="#3c6fd1" />
+          </linearGradient>
+          <filter id="liq" filterUnits="userSpaceOnUse" x="-200" y="-200" width="2320" height="1480">
+            <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.0035 0.0105" numOctaves="2" seed="7" result="noise" />
+            <feDisplacementMap id="disp" in="SourceGraphic" in2="noise" scale="140" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+        <g filter="url(#liq)">
+          <path
+            id="ribTop"
+            fill="url(#chromeG)"
+            d="M-200 -200 H2120 V120 C1700 60 1560 170 1100 120 C700 76 420 170 -200 90 Z"
+          />
+          <path
+            id="ribBot"
+            fill="url(#chromeG)"
+            d="M-200 1280 H2120 V930 C1700 990 1520 880 1080 940 C760 990 420 900 -200 960 Z"
+          />
+        </g>
+      </svg>
+
+      <!-- Hero: the shop name -->
+      <div id="hero" class="clip layer" data-start="0" data-duration="1.8" data-track-index="1">
+        <h1 id="heroText">Lantern Bean</h1>
+      </div>
+
+      <!-- Cup: one assembled object, saucer centred under the body, handle attached, steam above the mouth -->
+      <svg
+        id="cup"
+        class="clip layer"
+        data-start="1.8"
+        data-duration="3.2"
+        data-track-index="2"
+        width="1920"
+        height="1080"
+        viewBox="0 0 1920 1080"
+      >
+        <g id="cupG">
+          <ellipse cx="600" cy="730" rx="300" ry="42" fill="url(#cupG)" stroke="#f5f5f2" stroke-opacity="0.55" stroke-width="3" />
+          <ellipse cx="600" cy="716" rx="250" ry="26" fill="#0b1020" opacity="0.55" />
+          <path
+            d="M782 500 C900 470 940 600 770 640"
+            fill="none"
+            stroke="url(#cupG)"
+            stroke-width="36"
+            stroke-linecap="round"
+          />
+          <path d="M400 440 L800 440 C800 600 760 700 600 712 C440 700 400 600 400 440 Z" fill="url(#cupG)" stroke="#f5f5f2" stroke-opacity="0.55" stroke-width="3" />
+          <path
+            d="M440 520 C440 600 470 650 520 680"
+            fill="none"
+            stroke="#ffffff"
+            stroke-opacity="0.35"
+            stroke-width="10"
+            stroke-linecap="round"
+          />
+          <ellipse cx="600" cy="440" rx="200" ry="40" fill="url(#cupG)" stroke="#f5f5f2" stroke-opacity="0.7" stroke-width="3" />
+          <ellipse cx="600" cy="446" rx="186" ry="30" fill="#1a0c18" />
+          <g id="steam" fill="none" stroke="#f5f5f2" stroke-opacity="0.6" stroke-width="10" stroke-linecap="round">
+            <path d="M540 380 C520 330 560 300 540 250 C520 210 555 190 540 170" />
+            <path d="M600 380 C580 330 620 300 600 250 C580 210 615 190 600 170" />
+            <path d="M660 380 C640 330 680 300 660 250 C640 210 675 190 660 170" />
+          </g>
+        </g>
+      </svg>
+
+      <!-- Copy beside the cup -->
+      <div id="copy" class="clip layer" data-start="1.8" data-duration="3.2" data-track-index="3">
+        <h2 id="headline">Fresh coffee, every morning</h2>
+        <div id="brandSmall">Lantern Bean</div>
+      </div>
+
+      <!-- Style label, 72 px inside the frame -->
+      <div id="label" class="clip" data-start="0" data-duration="5" data-track-index="4">Liquid Chrome</div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Liquid drift: the displacement field moves slowly over the full 5 s
+      const turb = document.getElementById("turb");
+      const disp = document.getElementById("disp");
+      const liquid = { f: 0.0035, s: 140 };
+      const applyLiquid = () => {
+        turb.setAttribute("baseFrequency", `${liquid.f} ${(liquid.f * 3).toFixed(5)}`);
+        disp.setAttribute("scale", liquid.s.toFixed(1));
+      };
+      applyLiquid();
+      tl.to(liquid, { f: 0.0055, s: 190, duration: 5, ease: "sine.inOut", onUpdate: applyLiquid }, 0);
+
+      // Chrome reflections slide across the material
+      tl.fromTo("#chromeG", { attr: { x1: -1200, x2: 720 } }, { attr: { x1: 600, x2: 2520 }, duration: 5, ease: "none" }, 0);
+
+      // Hero 0 - 1.8 s
+      tl.fromTo("#heroText", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.1);
+      tl.to("#heroText", { opacity: 0, y: -30, duration: 0.25, ease: "power2.in" }, 1.55);
+
+      // Cup 1.8 - 2.8 s, copy in place by 2.8 s
+      tl.fromTo("#cupG", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 1.8);
+      tl.fromTo("#headline", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 2.0);
+      tl.fromTo("#brandSmall", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 2.2);
+
+      // Gentle movement after 2.8 s
+      tl.to("#steam", { y: -14, duration: 0.6, yoyo: true, repeat: 2, ease: "sine.inOut" }, 2.8);
+      tl.to("#cupG", { y: -8, duration: 1.1, yoyo: true, repeat: 1, ease: "sine.inOut" }, 2.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

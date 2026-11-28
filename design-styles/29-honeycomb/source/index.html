@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Archivo Local";
+        src: url("assets/Archivo.ttf") format("truetype");
+        font-weight: 100 900;
+        font-stretch: 62% 125%;
+        font-style: normal;
+        font-display: block;
+      }
+      :root {
+        --paper: #f2efe8;
+        --ink: #101016;
+        --blueprint: #0d254b;
+        --amber: #f2af43;
+        --font-display: "Archivo Local", "Helvetica Neue", Arial, sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      #field-svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: visible;
+      }
+      #style-label {
+        position: absolute;
+        left: 96px;
+        top: 72px;
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #hero-wrap {
+        position: absolute;
+        left: 120px;
+        top: 250px;
+        width: 900px;
+      }
+      #hero {
+        font-size: 200px;
+        font-weight: 800;
+        line-height: 0.92;
+        letter-spacing: -0.03em;
+        color: var(--ink);
+      }
+      #copy-wrap {
+        position: absolute;
+        left: 120px;
+        top: 300px;
+        width: 760px;
+      }
+      #name {
+        font-size: 40px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+        margin-bottom: 26px;
+        white-space: nowrap;
+      }
+      #line {
+        font-size: 96px;
+        font-weight: 700;
+        line-height: 1.02;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      #cup-inner {
+        position: absolute;
+        left: 1290px;
+        top: 330px;
+        width: 420px;
+        height: 420px;
+      }
+      #cup-float {
+        width: 420px;
+        height: 420px;
+      }
+      #cup-float svg {
+        width: 420px;
+        height: 420px;
+        overflow: visible;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="field" class="clip" data-start="0" data-duration="5" data-track-index="0">
+        <svg id="field-svg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+
+      <div id="style-label" class="clip" data-start="0" data-duration="5" data-track-index="4">Honeycomb</div>
+
+      <div id="hero-clip" class="clip" data-start="0" data-duration="2" data-track-index="2">
+        <div id="hero-wrap">
+          <h1 id="hero">Lantern Bean</h1>
+        </div>
+      </div>
+
+      <div id="copy-clip" class="clip" data-start="1.8" data-duration="3.2" data-track-index="2">
+        <div id="copy-wrap">
+          <div id="name">Lantern Bean</div>
+          <div id="line">Fresh coffee, every morning</div>
+        </div>
+      </div>
+
+      <div id="cup-clip" class="clip" data-start="1.8" data-duration="3.2" data-track-index="3">
+        <div id="cup-inner">
+          <div id="cup-float">
+            <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+              <g id="steam" fill="none" stroke="#f2efe8" stroke-width="9" stroke-linecap="round" opacity="0.9">
+                <path d="M168 116 C150 92 186 76 168 50" />
+                <path d="M210 110 C192 84 228 68 210 38" />
+                <path d="M252 116 C234 92 270 76 252 50" />
+              </g>
+              <g id="cup">
+                <path d="M300 178 C352 170 368 238 298 252" fill="none" stroke="#f2efe8" stroke-width="22" stroke-linecap="round" />
+                <path d="M110 150 H310 L300 252 Q296 290 258 292 H162 Q124 290 120 252 Z" fill="#f2efe8" />
+                <path d="M118 222 H302" stroke="#f2af43" stroke-width="10" />
+                <ellipse cx="210" cy="150" rx="100" ry="18" fill="#f2efe8" />
+                <ellipse cx="210" cy="150" rx="86" ry="12" fill="#f2af43" />
+                <ellipse cx="210" cy="304" rx="134" ry="22" fill="#f2efe8" />
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const NS = "http://www.w3.org/2000/svg";
+      const S3 = Math.sqrt(3);
+      const rs = 44;
+      const big = { x: 1500, y: 540, r: 300 };
+
+      function hexPts(cx, cy, r) {
+        const pts = [];
+        for (let k = 0; k < 6; k++) {
+          const a = (k * Math.PI) / 3;
+          pts.push((cx + r * Math.cos(a)).toFixed(2) + "," + (cy + r * Math.sin(a)).toFixed(2));
+        }
+        return pts.join(" ");
+      }
+      function hash(i, j) {
+        let x = Math.imul(i * 374761393 + j * 668265263, 2246822519) ^ (i * 31 + j * 17);
+        x = Math.imul(x ^ (x >>> 13), 1274126177);
+        return ((x ^ (x >>> 16)) >>> 0) / 4294967296;
+      }
+      function el(tag, attrs, parent) {
+        const e = document.createElementNS(NS, tag);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        if (parent) parent.appendChild(e);
+        return e;
+      }
+
+      const svg = document.getElementById("field-svg");
+      const fieldLayer = el("g", { id: "field-layer" }, svg);
+      const bigG = el("g", { id: "big-cell" }, fieldLayer);
+      el("polygon", { points: hexPts(big.x, big.y, big.r), fill: "#0d254b" }, bigG);
+
+      const cells = [];
+      for (let i = -1; i <= 31; i++) {
+        for (let j = -2; j <= 17; j++) {
+          const cx = i * 1.5 * rs;
+          const cy = j * S3 * rs + (((i % 2) + 2) % 2 === 1 ? (S3 * rs) / 2 : 0);
+          if (cx < -rs || cx > 1920 + rs || cy < -rs || cy > 1080 + rs) continue;
+          if (cx < 1080 && cy > 220 && cy < 720) continue; // text zone
+          if (cx < 420 && cy < 130) continue; // label zone
+          const d = Math.hypot(cx - big.x, cy - big.y);
+          if (d < 336) continue; // keep the central cell clear
+          const u = hash(i, j);
+          const g = el("g", { class: "cell" }, fieldLayer);
+          const rr = rs - 3.5;
+          let kind = "outline";
+          if (u < 0.62) {
+            el("polygon", { points: hexPts(cx, cy, rr), fill: "#f2efe8", stroke: "#101016", "stroke-opacity": "0.2", "stroke-width": "2" }, g);
+          } else if (u < 0.8) {
+            kind = "blue";
+            el("polygon", { points: hexPts(cx, cy, rr), fill: "#0d254b" }, g);
+          } else if (u < 0.9) {
+            kind = "amber";
+            g.setAttribute("class", "cell cell-amber");
+            el("polygon", { points: hexPts(cx, cy, rr), fill: "#f2af43" }, g);
+          } else {
+            el("polygon", { points: hexPts(cx, cy, rr), fill: "#f2efe8", stroke: "#101016", "stroke-opacity": "0.2", "stroke-width": "2" }, g);
+            el("ellipse", { cx: cx, cy: cy, rx: 9, ry: 6, fill: "#101016", "fill-opacity": "0.8", transform: "rotate(" + Math.round(hash(j, i) * 180) + " " + cx + " " + cy + ")" }, g);
+          }
+          cells.push({ g, d, kind });
+        }
+      }
+      // Cup cell: a large hex inside the honeycomb.
+      const cupCell = { x: big.x, y: big.y };
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Field: cells grow outward from the central cell.
+      gsap.set(".cell", { transformOrigin: "50% 50%" });
+      gsap.set("#big-cell", { transformOrigin: "50% 50%" });
+      tl.fromTo("#big-cell", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0);
+      for (const c of cells) {
+        const t0 = 0.1 + (c.d / 1500) * 1.0;
+        tl.fromTo(c.g, { opacity: 0, scale: 0.55 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, t0);
+      }
+
+      // Style label.
+      tl.fromTo("#style-label", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0);
+
+      // Hero: Lantern Bean, then exits upward.
+      tl.fromTo("#hero", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 0.05);
+      tl.to("#hero", { y: -36, opacity: 0, duration: 0.38, ease: "power2.in" }, 1.55);
+
+      // Copy: line first, smaller name above it.
+      tl.fromTo("#line", { y: 36, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 1.9);
+      tl.fromTo("#name", { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.1);
+
+      // Cup: rises into the central cell, all in place by 2.8 s.
+      tl.fromTo("#cup-inner", { y: 46, opacity: 0, scale: 0.94 }, { y: 0, opacity: 1, scale: 1, duration: 0.9, ease: "power3.out" }, 1.9);
+
+      // Hold: gentle movement only.
+      tl.to("#cup-float", { y: -8, duration: 1.05, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+      tl.to("#steam", { y: -7, opacity: 0.45, duration: 1.05, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+      tl.to(".cell-amber", { opacity: 0.55, duration: 1.05, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.12 }, 2.9);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Lantern Bean - Generative Art</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Archivo Local";
+        src: url("assets/archivo.ttf") format("truetype");
+        font-weight: 100 900;
+        font-stretch: 62% 125%;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "JetBrains Mono Local";
+        src: url("assets/jbmono.ttf") format("truetype");
+        font-weight: 100 800;
+        font-style: normal;
+      }
+      :root {
+        --paper: #f3eee2;
+        --ink: #161616;
+        --orange: #ff6a1a;
+        --pink: #ff2d8a;
+        --blue: #2346e0;
+        --gold: #ffc530;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--paper);
+        overflow: hidden;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Archivo Local", sans-serif;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      #field {
+        width: 100%;
+        height: 100%;
+      }
+      #field svg,
+      #cup-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      #cup-svg {
+        pointer-events: none;
+      }
+
+      /* Hero: one cream card, hard offset shadow, no blur */
+      #hero {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #hero .hero-inner {
+        background: var(--paper);
+        border: 6px solid var(--ink);
+        box-shadow: 18px 18px 0 var(--ink);
+        padding: 36px 92px 40px;
+      }
+      #hero h1 {
+        margin: 0;
+        font-family: "Archivo Local", sans-serif;
+        font-weight: 900;
+        font-stretch: 112%;
+        font-size: 170px;
+        line-height: 0.92;
+        letter-spacing: -0.035em;
+        white-space: nowrap;
+        color: var(--ink);
+      }
+
+      /* Scene 2: text card on the left, cup on the right */
+      #scene2 .text-wrap {
+        position: absolute;
+        left: 150px;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+      }
+      #text-card {
+        width: 760px;
+        background: var(--paper);
+        border: 6px solid var(--ink);
+        box-shadow: 16px 16px 0 var(--ink);
+        padding: 56px 60px 52px;
+      }
+      #line {
+        margin: 0;
+        font-family: "Archivo Local", sans-serif;
+        font-weight: 850;
+        font-stretch: 110%;
+        font-size: 88px;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        color: var(--ink);
+      }
+      #name {
+        margin: 40px 0 0;
+        padding-top: 24px;
+        border-top: 6px solid var(--ink);
+        font-family: "JetBrains Mono Local", monospace;
+        font-weight: 600;
+        font-size: 36px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+
+      /* Style label, inside the frame by 72px and 56px */
+      #label {
+        inset: auto;
+        position: absolute;
+        left: 72px;
+        bottom: 56px;
+        padding: 12px 18px;
+        background: var(--paper);
+        border: 4px solid var(--ink);
+        font-family: "JetBrains Mono Local", monospace;
+        font-weight: 600;
+        font-size: 28px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="5"
+    >
+      <!-- Generative field: ribbons built from a seeded flow field (seed 2046) -->
+      <div id="field" class="clip" data-start="0" data-duration="5">
+        <svg id="field-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect x="0" y="0" width="1920" height="1080" fill="#f3eee2" />
+          <g id="field-inner"></g>
+        </svg>
+      </div>
+
+      <!-- Scene 1: shop name -->
+      <div id="hero" class="clip" data-start="0" data-duration="1.9">
+        <div class="hero-inner">
+          <h1 id="hero-name">Lantern Bean</h1>
+        </div>
+      </div>
+
+      <!-- Scene 2: cup, line and name -->
+      <div id="scene2" class="clip" data-start="1.8" data-duration="3.2">
+        <div class="text-wrap">
+          <div id="text-card">
+            <h2 id="line">Fresh coffee, every morning</h2>
+            <p id="name">Lantern Bean</p>
+          </div>
+        </div>
+
+        <svg id="cup-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-label="Coffee cup">
+          <defs>
+            <clipPath id="body-clip">
+              <path d="M -150 -150 L 150 -150 L 128 118 Q 122 170 70 170 L -70 170 Q -122 170 -128 118 Z" />
+            </clipPath>
+          </defs>
+          <g id="cup-pos" transform="translate(1400 580)">
+            <g id="cup">
+              <!-- saucer, centred under the cup -->
+              <ellipse id="saucer" cx="0" cy="196" rx="240" ry="46" fill="#2346e0" stroke="#161616" stroke-width="8" />
+              <!-- handle, starts and ends inside the body so it is attached -->
+              <path id="handle" d="M 120 -60 C 232 -80 264 40 118 84" fill="none" stroke="#161616" stroke-width="34" stroke-linecap="round" />
+              <!-- body with generative stripes clipped to its shape -->
+              <g id="body-g">
+                <path d="M -150 -150 L 150 -150 L 128 118 Q 122 170 70 170 L -70 170 Q -122 170 -128 118 Z" fill="#ff6a1a" />
+                <g clip-path="url(#body-clip)" fill="none" stroke-linecap="round">
+                  <path d="M -170 -20 C -60 -60 60 20 180 -30" stroke="#ffc530" stroke-width="14" />
+                  <path d="M -170 30 C -60 -10 60 70 180 20" stroke="#ff2d8a" stroke-width="12" />
+                  <path d="M -170 84 C -40 44 60 124 180 74" stroke="#161616" stroke-width="10" />
+                </g>
+                <path d="M -150 -150 L 150 -150 L 128 118 Q 122 170 70 170 L -70 170 Q -122 170 -128 118 Z" fill="none" stroke="#161616" stroke-width="8" stroke-linejoin="round" />
+              </g>
+              <!-- rim and coffee surface -->
+              <g id="rim">
+                <ellipse cx="0" cy="-150" rx="150" ry="34" fill="#f3eee2" stroke="#161616" stroke-width="8" />
+                <ellipse cx="0" cy="-150" rx="124" ry="23" fill="#161616" />
+              </g>
+              <!-- steam above the mouth -->
+              <g id="steam-g" fill="none" stroke="#ff2d8a" stroke-width="12" stroke-linecap="round">
+                <path class="steam" d="M -70 -206 C -100 -246 -40 -276 -70 -326" pathLength="1" />
+                <path class="steam" d="M 0 -212 C 30 -256 -30 -290 0 -346" pathLength="1" />
+                <path class="steam" d="M 70 -206 C 40 -246 100 -276 70 -326" pathLength="1" />
+              </g>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Style label for the whole video -->
+      <div id="label" class="clip" data-start="0" data-duration="5">Generative Art</div>
+    </div>
+
+    <script>
+      // ---- Seeded generation (no Math.random, no clocks) ----
+      function mulberry32(a) {
+        return function () {
+          a |= 0;
+          a = (a + 0x6d2b79f5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      const rnd = mulberry32(2046);
+      const PH = [rnd() * 6.283, rnd() * 6.283, rnd() * 6.283, rnd() * 6.283];
+      const W = 1920, H = 1080, STEP = 4, GAP = 5, CELL = 4;
+      const CW = W / CELL, CH = H / CELL;
+      const occId = new Int32Array(CW * CH).fill(-1);
+      const occHalf = new Float32Array(CW * CH);
+
+      function angle(x, y) {
+        return (
+          1.25 * Math.sin(x / 240 + PH[0]) +
+          1.1 * Math.cos(y / 175 + PH[1]) +
+          0.8 * Math.sin((x + y) / 320 + PH[2]) +
+          0.55 * Math.cos((x - y) / 125 + PH[3])
+        );
+      }
+      function free(x, y, half, id) {
+        const reach = half + GAP + 48;
+        const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL), r = Math.ceil(reach / CELL);
+        for (let j = Math.max(0, cy - r); j <= Math.min(CH - 1, cy + r); j++) {
+          for (let i = Math.max(0, cx - r); i <= Math.min(CW - 1, cx + r); i++) {
+            const k = j * CW + i;
+            const o = occId[k];
+            if (o < 0 || o === id) continue;
+            const d = Math.hypot((i + 0.5) * CELL - x, (j + 0.5) * CELL - y);
+            if (d < half + occHalf[k] + GAP) return false;
+          }
+        }
+        return true;
+      }
+      function markDisc(x, y, half, id, log) {
+        const r = Math.ceil(half / CELL);
+        const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL);
+        for (let j = cy - r; j <= cy + r; j++) {
+          for (let i = cx - r; i <= cx + r; i++) {
+            if (i < 0 || j < 0 || i >= CW || j >= CH) continue;
+            if (Math.hypot((i + 0.5) * CELL - x, (j + 0.5) * CELL - y) > half) continue;
+            const k = j * CW + i;
+            log.push([k, occId[k], occHalf[k]]);
+            occId[k] = id;
+            occHalf[k] = half;
+          }
+        }
+      }
+      function trace(x, y, half, maxLen, id) {
+        if (!free(x, y, half, id)) return null;
+        const log = [];
+        const pts = [[x, y]];
+        let len = 0;
+        markDisc(x, y, half, id, log);
+        while (len < maxLen) {
+          const a = angle(x, y);
+          const nx = x + Math.cos(a) * STEP, ny = y + Math.sin(a) * STEP;
+          if (nx < 40 || nx > W - 40 || ny < 40 || ny > H - 40) break;
+          if (!free(nx, ny, half, id)) break;
+          markDisc(nx, ny, half, id, log);
+          x = nx; y = ny;
+          pts.push([x, y]);
+          len += STEP;
+        }
+        if (pts.length < 10) {
+          for (let q = log.length - 1; q >= 0; q--) {
+            occId[log[q][0]] = log[q][1];
+            occHalf[log[q][0]] = log[q][2];
+          }
+          return null;
+        }
+        return pts;
+      }
+
+      // Large forms first, then smaller ones fill the gaps
+      const CLASSES = [
+        { w: 96, n: 2, max: 820 },
+        { w: 64, n: 4, max: 760 },
+        { w: 40, n: 8, max: 640 },
+        { w: 26, n: 16, max: 520 },
+        { w: 16, n: 30, max: 420 },
+        { w: 10, n: 44, max: 340 },
+        { w: 6, n: 60, max: 280 }
+      ];
+      const COLORS = [
+        ["#2346e0", 3], ["#ffc530", 3], ["#ff6a1a", 3], ["#ff2d8a", 2], ["#161616", 2]
+      ];
+      const WSUM = COLORS.reduce((s, c) => s + c[1], 0);
+      function pickColor() {
+        let r = rnd() * WSUM;
+        for (const c of COLORS) { r -= c[1]; if (r < 0) return c[0]; }
+        return COLORS[0][0];
+      }
+
+      const ribbons = [];
+      let nextId = 0;
+      for (const cls of CLASSES) {
+        let got = 0;
+        const tries = cls.n * 40;
+        for (let t = 0; t < tries && got < cls.n; t++) {
+          const x0 = 60 + rnd() * (W - 120);
+          const y0 = 60 + rnd() * (H - 120);
+          const id = nextId;
+          const pts = trace(x0, y0, cls.w / 2, cls.max, id);
+          if (!pts) continue;
+          nextId++;
+          got++;
+          ribbons.push({ w: cls.w, color: pickColor(), pts });
+        }
+      }
+      const TOTAL = ribbons.length;
+
+      function buildPaths() {
+        const ns = "http://www.w3.org/2000/svg";
+        const g = document.getElementById("field-inner");
+        const els = [];
+        ribbons.forEach((r, i) => {
+          let d = "M" + r.pts[0][0].toFixed(1) + " " + r.pts[0][1].toFixed(1);
+          for (let k = 1; k < r.pts.length; k++) {
+            d += "L" + r.pts[k][0].toFixed(1) + " " + r.pts[k][1].toFixed(1);
+          }
+          const p = document.createElementNS(ns, "path");
+          p.setAttribute("d", d);
+          p.setAttribute("pathLength", "1");
+          p.setAttribute("fill", "none");
+          p.setAttribute("stroke", r.color);
+          p.setAttribute("stroke-width", String(r.w));
+          p.setAttribute("stroke-linecap", "round");
+          p.setAttribute("stroke-linejoin", "round");
+          p.setAttribute("stroke-dasharray", "1 1");
+          p.setAttribute("stroke-dashoffset", "1");
+          g.appendChild(p);
+          els.push({ el: p, delay: 0.08 + (i / TOTAL) * 1.55, dur: 0.7 + ((i * 37) % 11) / 22 });
+        });
+        return els;
+      }
+
+      function build() {
+        const els = buildPaths();
+        const tl = gsap.timeline({ paused: true });
+
+        // Field: grows from each origin point, large forms first
+        gsap.set("#field-inner", { transformOrigin: "960px 540px" });
+        tl.fromTo("#field-inner", { scale: 1 }, { scale: 1.012, duration: 5, ease: "sine.inOut" }, 0);
+        els.forEach((r) => {
+          tl.fromTo(r.el, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: r.dur, ease: "power2.out" }, r.delay);
+        });
+
+        // Scene 1: shop name holds 0.0 - 1.8 s
+        tl.fromTo("#hero .hero-inner", { scale: 0.94, y: 24 }, { scale: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0);
+        tl.fromTo("#hero-name", { y: 30 }, { y: 0, duration: 0.6, ease: "power3.out" }, 0.05);
+        tl.to("#hero .hero-inner", { opacity: 0, y: -24, duration: 0.3, ease: "power1.in" }, 1.6);
+
+        // Scene 2: cup assembles 1.8 - 2.8 s
+        gsap.set("#saucer", { transformOrigin: "0px 196px" });
+        gsap.set("#body-g", { transformOrigin: "0px 170px" });
+        gsap.set("#handle", { transformOrigin: "0px 0px" });
+        tl.fromTo("#saucer", { scaleX: 0.4, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.5, ease: "power3.out" }, 1.8);
+        tl.fromTo("#body-g", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.4)" }, 1.9);
+        tl.fromTo("#handle", { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.1);
+        tl.fromTo("#rim", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 2.2);
+        document.querySelectorAll(".steam").forEach((p, n) => {
+          tl.fromTo(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, ease: "power1.inOut" }, 2.3 + n * 0.1);
+        });
+        // Text: card, line, then name; all in place by 2.8 s
+        tl.fromTo("#text-card", { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 1.9);
+        tl.fromTo("#line", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.2);
+        tl.fromTo("#name", { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 2.4);
+
+        // Held 2.8 - 5.0 s: gentle movement only (finite repeats)
+        tl.to("#cup", { y: -8, duration: 1.1, repeat: 1, yoyo: true, ease: "sine.inOut" }, 2.8);
+        tl.to("#steam-g", { y: -6, duration: 1.1, repeat: 1, yoyo: true, ease: "sine.inOut" }, 2.8);
+
+        window.__timelines["main"] = tl;
+      }
+
+      document.fonts.ready.then(build);
+    </script>
+  </body>
+</html>

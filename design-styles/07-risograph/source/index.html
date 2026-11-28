@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Archivo";
+        src: url("assets/fonts/archivo-latin-800-normal.woff2") format("woff2");
+        font-weight: 800;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Archivo";
+        src: url("assets/fonts/archivo-latin-900-normal.woff2") format("woff2");
+        font-weight: 900;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Space Mono";
+        src: url("assets/fonts/space-mono-latin-400-normal.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: block;
+      }
+      :root {
+        --paper: #f3ecdb;
+        --pink: #ff48b0;
+        --teal: #00838a;
+        --sun: #ffb511;
+        --black: #000000;
+        --font-display: "Archivo", sans-serif;
+        --font-mono: "Space Mono", monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      .ink {
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      /* Scene A: hero */
+      .hero-wrap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 300px;
+        height: 220px;
+        text-align: center;
+      }
+      .hero {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 220px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+      }
+      .hero-main {
+        position: relative;
+        color: var(--black);
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      .hero-pink {
+        color: #d93d96;
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      .hero-teal {
+        color: var(--teal);
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      .sun {
+        position: absolute;
+        left: 1120px;
+        top: 470px;
+        width: 560px;
+        height: 560px;
+        border-radius: 50%;
+        background: var(--sun);
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      .slab {
+        position: absolute;
+        left: 96px;
+        top: 660px;
+        width: 380px;
+        height: 230px;
+        background: var(--teal);
+        transform-origin: 0% 50%;
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      .spot {
+        position: absolute;
+        border-radius: 50%;
+        background: var(--pink);
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      /* Scene B: tagline, name, cup */
+      .tagline {
+        position: absolute;
+        left: 96px;
+        top: 330px;
+        width: 900px;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 104px;
+        line-height: 96px;
+        letter-spacing: -0.015em;
+        white-space: nowrap;
+      }
+      .ln {
+        position: relative;
+        height: 96px;
+        width: 900px;
+      }
+      .ln span,
+      .name span {
+        position: absolute;
+        left: 0;
+        top: 0;
+        white-space: nowrap;
+      }
+      .ln .plate,
+      .name .plate {
+        color: #d93d96;
+        left: 9px;
+        top: 7px;
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      .ln .ink,
+      .name .ink {
+        color: var(--black);
+        position: relative;
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      .ln .plate {
+        position: absolute;
+      }
+      .bar {
+        position: absolute;
+        left: 96px;
+        top: 612px;
+        width: 150px;
+        height: 18px;
+        background: var(--sun);
+        transform-origin: 0% 50%;
+        mix-blend-mode: multiply;
+        filter: url(#ink);
+      }
+      .name {
+        position: absolute;
+        left: 96px;
+        top: 650px;
+        width: 700px;
+        height: 70px;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 58px;
+        line-height: 70px;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+      }
+      .name .plate {
+        color: var(--teal);
+        left: 6px;
+        top: 5px;
+      }
+      .dots {
+        position: absolute;
+        left: 1040px;
+        top: 170px;
+        width: 720px;
+        height: 720px;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--pink) 0 4px, transparent 5px) 0 0 / 24px 24px;
+        -webkit-mask-image: radial-gradient(circle, #000 52%, transparent 70%);
+        mask-image: radial-gradient(circle, #000 52%, transparent 70%);
+        mix-blend-mode: multiply;
+        opacity: 0.85;
+      }
+      .cup-svg {
+        position: absolute;
+        left: 1120px;
+        top: 200px;
+        width: 600px;
+        height: 600px;
+        overflow: visible;
+      }
+      .steam {
+        fill: none;
+        stroke: var(--pink);
+        stroke-width: 16;
+        stroke-linecap: round;
+      }
+      /* Label and grain */
+      .label {
+        position: absolute;
+        left: 96px;
+        bottom: 96px;
+        font-family: var(--font-mono);
+        font-weight: 400;
+        font-size: 28px;
+        letter-spacing: 0.12em;
+        color: var(--black);
+        white-space: nowrap;
+      }
+      .grain {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        pointer-events: none;
+        mix-blend-mode: multiply;
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <filter id="ink" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="11" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" result="d" />
+          <feColorMatrix
+            in="n"
+            type="matrix"
+            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  10 0 0 0 -2.2"
+            result="speck"
+          />
+          <feComposite in="d" in2="speck" operator="in" />
+        </filter>
+        <filter id="paperNoise" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" stitchTiles="stitch" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0.35  0 0 0 0 0.3  0 0 0 0 0.22  -2.4 0 0 0 1.5"
+          />
+        </filter>
+      </defs>
+    </svg>
+
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Scene A: 0.0 - 1.8 s, hero name -->
+      <section id="scene-a" class="clip scene-a" data-start="0" data-duration="1.8" data-track-index="0">
+        <div class="sun"></div>
+        <div class="slab"></div>
+        <div class="spot" style="left: 230px; top: 150px; width: 96px; height: 96px"></div>
+        <div class="spot" style="left: 350px; top: 178px; width: 56px; height: 56px"></div>
+        <div class="hero-wrap">
+          <div class="hero hero-pink" data-layout-ignore aria-hidden="true">Lantern Bean</div>
+          <div class="hero hero-teal" data-layout-ignore aria-hidden="true">Lantern Bean</div>
+          <div class="hero hero-main">Lantern Bean</div>
+        </div>
+      </section>
+
+      <!-- Scene B: 1.8 - 5.0 s, cup, line, name -->
+      <section id="scene-b" class="clip scene-b" data-start="1.8" data-duration="3.2" data-track-index="1">
+        <div class="dots"></div>
+
+        <svg class="cup-svg" viewBox="0 0 600 600" aria-label="Coffee cup">
+          <ellipse class="saucer" cx="260" cy="478" rx="292" ry="50" fill="#ffb511" style="mix-blend-mode: multiply" />
+          <path
+            class="steam"
+            pathLength="1"
+            stroke-dasharray="1"
+            stroke-dashoffset="1"
+            d="M 215 180 C 195 150 235 130 215 100 C 200 75 230 60 215 35"
+          />
+          <path
+            class="steam"
+            pathLength="1"
+            stroke-dasharray="1"
+            stroke-dashoffset="1"
+            d="M 260 180 C 240 150 280 130 260 100 C 245 75 275 60 260 35"
+          />
+          <path
+            class="steam"
+            pathLength="1"
+            stroke-dasharray="1"
+            stroke-dashoffset="1"
+            d="M 305 180 C 285 150 325 130 305 100 C 290 75 320 60 305 35"
+          />
+          <path
+            d="M 84 262 L 464 262 C 464 402 424 482 374 482 L 174 482 C 124 482 84 402 84 262 Z"
+            fill="#ff48b0"
+            style="mix-blend-mode: multiply"
+          />
+          <g class="cup" filter="url(#ink)">
+            <path
+              d="M 452 304 C 556 280 560 432 444 430"
+              fill="none"
+              stroke="#00838a"
+              stroke-width="34"
+            />
+            <path d="M 70 250 L 450 250 C 450 390 410 470 360 470 L 160 470 C 110 470 70 390 70 250 Z" fill="#00838a" />
+            <ellipse cx="260" cy="250" rx="190" ry="34" fill="#00838a" />
+            <ellipse cx="260" cy="252" rx="164" ry="22" fill="#000000" />
+          </g>
+        </svg>
+
+        <div class="tagline">
+          <div class="ln ln1"><span class="plate" data-layout-ignore aria-hidden="true">Fresh coffee,</span><span class="ink">Fresh coffee,</span></div>
+          <div class="ln ln2"><span class="plate" data-layout-ignore aria-hidden="true">every morning</span><span class="ink">every morning</span></div>
+        </div>
+        <div class="bar"></div>
+        <div class="name"><span class="plate" data-layout-ignore aria-hidden="true">Lantern Bean</span><span class="ink">Lantern Bean</span></div>
+      </section>
+
+      <!-- Always visible style label -->
+      <div class="label">Risograph</div>
+      <div class="grain">
+        <svg width="1920" height="1080" viewBox="0 0 1920 1080" style="display: block">
+          <rect width="1920" height="1080" filter="url(#paperNoise)" />
+        </svg>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene A: plates slam into register, hero holds
+      tl.fromTo(".sun", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.6)" }, 0.05);
+      tl.fromTo(".slab", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 0.15);
+      tl.fromTo(".hero-pink", { x: 46, y: 24 }, { x: 12, y: 9, duration: 0.42, ease: "power4.out" }, 0);
+      tl.fromTo(".hero-teal", { x: -40, y: -20 }, { x: -8, y: -5, duration: 0.42, ease: "power4.out" }, 0.04);
+      tl.fromTo(".hero-main", { y: 16 }, { y: 0, duration: 0.45, ease: "power4.out" }, 0);
+      tl.to(".scene-a > *", { opacity: 0, duration: 0.25, ease: "power1.in" }, 1.55);
+
+      // Scene B: dots, saucer, cup, line, name
+      tl.fromTo(".dots", { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 0.85, duration: 0.8, ease: "back.out(1.2)" }, 1.8);
+      tl.to(".dots", { rotation: 14, duration: 3.2, ease: "none" }, 1.8);
+      tl.fromTo(".saucer", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.95);
+      tl.fromTo(".cup", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 2.0);
+      tl.fromTo(".steam", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7, ease: "power1.out", stagger: 0.1 }, 2.3);
+      tl.fromTo(".ln1", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.05);
+      tl.fromTo(".ln2", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.25);
+      tl.fromTo(".bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 2.4);
+      tl.fromTo(".name", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 2.45);
+
+      // Hold: gentle style movement only, all finite
+      tl.to(".steam", { y: -8, duration: 0.9, repeat: 1, yoyo: true, ease: "sine.inOut", stagger: 0.12 }, 2.8);
+      tl.to(".cup", { y: -6, duration: 1.05, repeat: 1, yoyo: true, ease: "sine.inOut" }, 2.8);
+      tl.to(".plate", { x: 5, y: -3, duration: 1.05, repeat: 1, yoyo: true, ease: "sine.inOut" }, 2.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

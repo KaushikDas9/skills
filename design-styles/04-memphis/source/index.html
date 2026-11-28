@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "FredokaLocal";
+        font-weight: 600;
+        font-style: normal;
+        font-display: block;
+        src: url("assets/Fredoka-600.ttf") format("truetype");
+      }
+      @font-face {
+        font-family: "FredokaLocal";
+        font-weight: 700;
+        font-style: normal;
+        font-display: block;
+        src: url("assets/Fredoka-700.ttf") format("truetype");
+      }
+      :root {
+        --paper: #fdf6ec;
+        --pink: #ff7eb6;
+        --yellow: #ffd23f;
+        --teal: #22c3b5;
+        --blue: #2d4bff;
+        --red: #ff5a36;
+        --lilac: #b79cff;
+        --ink: #111111;
+        --font-display: "FredokaLocal", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      #decor {
+        overflow: visible;
+      }
+      #hero {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #hero-title {
+        font-weight: 700;
+        font-size: 230px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        color: var(--ink);
+        -webkit-text-stroke: 9px var(--ink);
+        paint-order: stroke fill;
+        text-shadow: 14px 14px 0 var(--ink);
+      }
+      .ltr {
+        display: inline-block;
+      }
+      .sp {
+        display: inline-block;
+        width: 0.28em;
+      }
+      #cup-scene {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+      }
+      #tagline {
+        display: inline-block;
+        background: var(--yellow);
+        border: 6px solid var(--ink);
+        border-radius: 999px;
+        box-shadow: 10px 10px 0 var(--ink);
+        padding: 14px 48px 18px;
+        font-weight: 600;
+        font-size: 66px;
+        line-height: 1.1;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #wipe {
+        background: var(--teal);
+        xpercent: 0;
+      }
+      #end-scene {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #card {
+        background: var(--pink);
+        border: 7px solid var(--ink);
+        border-radius: 40px;
+        box-shadow: 18px 18px 0 var(--ink);
+        padding: 36px 84px 52px;
+        font-weight: 700;
+        font-size: 178px;
+        line-height: 0.98;
+        color: var(--ink);
+        text-align: left;
+      }
+      #card span {
+        display: block;
+        white-space: nowrap;
+      }
+      #name {
+        margin-top: 72px;
+        display: inline-block;
+        background: var(--yellow);
+        border: 7px solid var(--ink);
+        border-radius: 999px;
+        box-shadow: 12px 12px 0 var(--ink);
+        padding: 12px 56px 16px;
+        font-weight: 700;
+        font-size: 84px;
+        line-height: 1.1;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #label {
+        position: absolute;
+        inset: auto;
+        left: 120px;
+        top: 104px;
+        background: var(--yellow);
+        border: 5px solid var(--ink);
+        border-radius: 999px;
+        box-shadow: 8px 8px 0 var(--ink);
+        padding: 8px 28px 10px;
+        font-weight: 600;
+        font-size: 34px;
+        line-height: 1.1;
+        color: var(--ink);
+        transform: rotate(-6deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Background shapes: flat candy colour, black outline, hard offset shadow -->
+      <svg
+        id="decor"
+        class="clip"
+        data-start="0"
+        data-duration="5"
+        data-track-index="0"
+        width="1920"
+        height="1080"
+        viewBox="0 0 1920 1080"
+      >
+        <!-- pink circle, top right -->
+        <g transform="translate(1640 210)">
+          <g id="pop-pink">
+            <circle cx="10" cy="10" r="170" fill="#111111" />
+            <circle r="170" fill="#ff7eb6" stroke="#111111" stroke-width="5" />
+          </g>
+        </g>
+        <!-- lilac square, top middle-right -->
+        <g transform="translate(150 560)">
+          <g id="pop-lilac">
+            <rect x="-55" y="-55" width="110" height="110" transform="translate(10 10)" fill="#111111" />
+            <rect x="-55" y="-55" width="110" height="110" fill="#b79cff" stroke="#111111" stroke-width="5" />
+          </g>
+        </g>
+        <!-- teal squiggle, top middle-left -->
+        <g transform="translate(700 150)">
+          <path class="squig" d="M-170 0 q42 -48 85 0 t85 0 t85 0 t85 0" transform="translate(10 10)" fill="none" stroke="#111111" stroke-width="34" stroke-linecap="round" />
+          <path class="squig" d="M-170 0 q42 -48 85 0 t85 0 t85 0 t85 0" fill="none" stroke="#111111" stroke-width="34" stroke-linecap="round" />
+          <path class="squig" d="M-170 0 q42 -48 85 0 t85 0 t85 0 t85 0" fill="none" stroke="#22c3b5" stroke-width="20" stroke-linecap="round" />
+        </g>
+        <!-- yellow triangle, bottom left -->
+        <g transform="translate(260 820)">
+          <g id="pop-tri">
+            <polygon points="0,-130 120,100 -120,100" transform="translate(10 10)" fill="#111111" stroke="#111111" stroke-width="5" stroke-linejoin="round" />
+            <polygon points="0,-130 120,100 -120,100" fill="#ffd23f" stroke="#111111" stroke-width="5" stroke-linejoin="round" />
+          </g>
+        </g>
+        <!-- cobalt half circle, bottom right -->
+        <g transform="translate(1700 900)">
+          <g id="pop-blue">
+            <path d="M-170 0 A170 170 0 0 1 170 0 Z" transform="translate(10 10)" fill="#111111" />
+            <path d="M-170 0 A170 170 0 0 1 170 0 Z" fill="#2d4bff" stroke="#111111" stroke-width="5" stroke-linejoin="round" />
+          </g>
+        </g>
+        <!-- small confetti -->
+        <circle cx="200" cy="300" r="10" fill="#111111" />
+        <circle cx="1040" cy="300" r="11" fill="#ffd23f" stroke="#111111" stroke-width="4" />
+        <circle cx="1560" cy="640" r="12" fill="#22c3b5" stroke="#111111" stroke-width="4" />
+        <circle cx="430" cy="880" r="8" fill="#111111" />
+        <circle cx="1300" cy="960" r="10" fill="#ff5a36" stroke="#111111" stroke-width="4" />
+        <circle cx="860" cy="960" r="7" fill="#111111" />
+        <circle cx="1380" cy="420" r="8" fill="#111111" />
+      </svg>
+
+      <!-- Hero: Lantern Bean, 0.0 - 1.6 s -->
+      <div id="hero" class="clip" data-start="0" data-duration="1.6" data-track-index="1">
+        <h1 id="hero-title">
+          <span class="ltr" style="color: #ff7eb6">L</span><span class="ltr" style="color: #ffd23f">a</span><span class="ltr" style="color: #22c3b5">n</span><span class="ltr" style="color: #2d4bff">t</span><span class="ltr" style="color: #ff5a36">e</span><span class="ltr" style="color: #b79cff">r</span><span class="ltr" style="color: #ff7eb6">n</span><span class="sp"></span><span class="ltr" style="color: #ffd23f">B</span><span class="ltr" style="color: #22c3b5">e</span><span class="ltr" style="color: #2d4bff">a</span><span class="ltr" style="color: #ff5a36">n</span>
+        </h1>
+      </div>
+
+      <!-- Cup + line, 1.6 - 3.4 s -->
+      <div id="cup-scene" class="clip" data-start="1.6" data-duration="1.8" data-track-index="1">
+        <svg id="cupart" width="600" height="520" viewBox="0 0 600 520" overflow="visible">
+          <!-- hard offset shadows -->
+          <g transform="translate(10 10)" fill="#111111" stroke="#111111" stroke-width="6" stroke-linejoin="round">
+            <path d="M60 400 H540 Q540 470 300 470 Q60 470 60 400 Z" />
+            <circle cx="480" cy="280" r="60" fill="none" stroke-width="34" />
+            <path d="M120 170 H480 L440 370 Q434 400 404 400 H196 Q166 400 160 370 Z" />
+          </g>
+          <!-- saucer (cobalt half disc) -->
+          <path d="M60 400 H540 Q540 470 300 470 Q60 470 60 400 Z" fill="#2d4bff" stroke="#111111" stroke-width="6" stroke-linejoin="round" />
+          <!-- handle: black outline ring with teal core -->
+          <circle cx="480" cy="280" r="60" fill="none" stroke="#111111" stroke-width="34" />
+          <circle cx="480" cy="280" r="60" fill="none" stroke="#22c3b5" stroke-width="18" />
+          <!-- body (candy pink) with a yellow stripe -->
+          <clipPath id="bodyclip">
+            <path d="M120 170 H480 L440 370 Q434 400 404 400 H196 Q166 400 160 370 Z" />
+          </clipPath>
+          <path d="M120 170 H480 L440 370 Q434 400 404 400 H196 Q166 400 160 370 Z" fill="#ff7eb6" stroke="#111111" stroke-width="6" stroke-linejoin="round" />
+          <rect x="100" y="250" width="400" height="36" fill="#ffd23f" clip-path="url(#bodyclip)" />
+          <path d="M100 250 H500 M100 286 H500" stroke="#111111" stroke-width="6" clip-path="url(#bodyclip)" />
+          <!-- rim and coffee surface -->
+          <ellipse cx="300" cy="170" rx="180" ry="26" fill="#fdf6ec" stroke="#111111" stroke-width="6" />
+          <ellipse cx="300" cy="172" rx="150" ry="14" fill="#111111" />
+          <!-- steam: three squiggles -->
+          <path class="steam" d="M225 150 q-24 -30 0 -60 t0 -60" fill="none" stroke="#111111" stroke-width="11" stroke-linecap="round" />
+          <path class="steam" d="M300 140 q24 -30 0 -60 t0 -60" fill="none" stroke="#111111" stroke-width="11" stroke-linecap="round" />
+          <path class="steam" d="M375 150 q-24 -30 0 -60 t0 -60" fill="none" stroke="#111111" stroke-width="11" stroke-linecap="round" />
+        </svg>
+        <div id="tagline">Fresh coffee, every morning</div>
+      </div>
+
+      <!-- Flat colour wipe between scenes -->
+      <div id="wipe" class="clip" data-start="3.15" data-duration="0.5" data-track-index="2"></div>
+
+      <!-- Closing line, 3.4 - 5.0 s -->
+      <div id="end-scene" class="clip" data-start="3.4" data-duration="1.6" data-track-index="1">
+        <div id="card"><span>Come in,</span><span>warm up.</span></div>
+        <div id="name">Lantern Bean</div>
+      </div>
+
+      <!-- Style label, whole video, on top -->
+      <div id="label" class="clip" data-start="0" data-duration="5" data-track-index="3">Memphis</div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Background shapes pop in and settle at their playful tilt
+      tl.fromTo("#pop-pink", { scale: 0.4 }, { scale: 1, duration: 0.5, ease: "back.out(2)" }, 0.0);
+      tl.fromTo("#pop-lilac", { scale: 0.4, rotation: -30 }, { scale: 1, rotation: 18, duration: 0.5, ease: "back.out(2)" }, 0.12);
+      tl.fromTo("#pop-tri", { scale: 0.4, rotation: -30 }, { scale: 1, rotation: 12, duration: 0.5, ease: "back.out(2)" }, 0.24);
+      tl.fromTo("#pop-blue", { scale: 0.4 }, { scale: 1, rotation: -6, duration: 0.5, ease: "back.out(2)" }, 0.36);
+      tl.fromTo(".squig", { strokeDasharray: 400, strokeDashoffset: 400 }, { strokeDashoffset: 0, duration: 0.8, ease: "none" }, 0.3);
+
+      // Hero: letters drop, squash on landing, spring back
+      tl.set("#hero-title", { rotation: -5 }, 0);
+      const letters = gsap.utils.toArray(".ltr");
+      letters.forEach((el, i) => {
+        const t = i * 0.05;
+        tl.set(el, { transformOrigin: "50% 100%" }, 0);
+        tl.fromTo(el, { y: -320 }, { y: 0, duration: 0.42, ease: "power2.in" }, t);
+        tl.to(el, { scaleX: 1.14, scaleY: 0.74, duration: 0.09, ease: "power1.out" }, t + 0.42);
+        tl.to(el, { scaleX: 1, scaleY: 1, duration: 0.42, ease: "elastic.out(1, 0.35)" }, t + 0.51);
+      });
+      tl.to("#hero-title", { scale: 0, duration: 0.3, ease: "back.in(2)" }, 1.25);
+
+      // Cup: falls, squashes, springs, tilts; steam draws; line pops in
+      tl.set("#cupart", { transformOrigin: "50% 100%" }, 1.6);
+      tl.fromTo("#cupart", { y: -760 }, { y: 0, duration: 0.42, ease: "power2.in" }, 1.6);
+      tl.to("#cupart", { scaleX: 1.12, scaleY: 0.76, duration: 0.1, ease: "power1.out" }, 2.02);
+      tl.to("#cupart", { scaleX: 1, scaleY: 1, duration: 0.45, ease: "elastic.out(1, 0.35)" }, 2.12);
+      tl.fromTo("#cupart", { rotation: 0 }, { rotation: 6, duration: 0.4, ease: "power2.out" }, 2.05);
+      tl.fromTo(".steam", { strokeDasharray: 400, strokeDashoffset: 400 }, { strokeDashoffset: 0, duration: 0.5, ease: "power1.out", stagger: 0.1 }, 2.2);
+      tl.fromTo("#tagline", { scale: 0 }, { scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 2.3);
+      tl.to("#tagline", { scale: 0, duration: 0.25, ease: "back.in(2)" }, 3.0);
+      tl.to("#cupart", { scaleX: 0, scaleY: 0, duration: 0.3, ease: "back.in(2)" }, 3.0);
+
+      // Flat teal wipe: in from the left, out to the right
+      tl.fromTo("#wipe", { xPercent: -100 }, { xPercent: 0, duration: 0.25, ease: "power2.inOut" }, 3.15);
+      tl.to("#wipe", { xPercent: 100, duration: 0.25, ease: "power2.inOut" }, 3.4);
+
+      // Closing: card pops, name sticker pops in tilted; finished by 4.4 s, then held
+      tl.fromTo("#card", { scale: 0 }, { scale: 1, duration: 0.38, ease: "back.out(2.2)" }, 3.6);
+      tl.fromTo("#name", { scale: 0, rotation: -30 }, { scale: 1, rotation: -6, duration: 0.4, ease: "back.out(2.2)" }, 4.0);
+
+      // Label stays put
+      tl.fromTo("#label", { opacity: 1 }, { opacity: 1, duration: 0.01 }, 0);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

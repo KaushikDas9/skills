@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Anton Local";
+        src: url(assets/fonts/anton-400.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Playfair Local";
+        src: url(assets/fonts/playfair-900.woff2) format("woff2");
+        font-weight: 900;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Playfair Local";
+        src: url(assets/fonts/playfair-900-italic.woff2) format("woff2");
+        font-weight: 900;
+        font-style: italic;
+      }
+      @font-face {
+        font-family: "Special Elite Local";
+        src: url(assets/fonts/special-elite-400.woff2) format("woff2");
+        font-weight: 400;
+        font-style: normal;
+      }
+      :root {
+        --paper: #e7ddc8;
+        --paper-light: #f4eee0;
+        --kraft: #cbb58e;
+        --ink: #16130f;
+        --red: #d3261c;
+        --ochre: #d9a72b;
+        --blue: #2f4e8c;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .abs {
+        position: absolute;
+      }
+      .grain {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        opacity: 0.55;
+        pointer-events: none;
+        mix-blend-mode: multiply;
+        z-index: 40;
+      }
+      /* Torn paper strips with nonsense typewriter text (no claims) */
+      .strip {
+        position: absolute;
+        background: var(--paper-light);
+        color: rgba(22, 19, 15, 0.82);
+        font-family: "Special Elite Local", monospace;
+        line-height: 1.55;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 36px 48px;
+        clip-path: polygon(
+          0 3%, 5% 0, 12% 2%, 25% 0, 40% 3%, 58% 0, 74% 2%, 88% 0, 100% 4%,
+          98% 22%, 100% 47%, 97% 70%, 100% 96%, 90% 100%, 76% 97%, 60% 100%,
+          44% 96%, 27% 100%, 12% 97%, 0 100%, 2% 76%, 0 52%, 2% 27%
+        );
+        z-index: 2;
+      }
+      .strip p {
+        font-size: 24px;
+      }
+      .shape {
+        position: absolute;
+        z-index: 3;
+      }
+      /* Name: one row of cut letters, each on its own scrap in a different face */
+      #name {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform-origin: 0 0;
+        white-space: nowrap;
+        font-size: 100px;
+        line-height: 1;
+        z-index: 20;
+      }
+      #name .ch {
+        display: inline-block;
+        position: relative;
+        filter: drop-shadow(7px 9px 0 rgba(22, 19, 15, 0.5));
+        vertical-align: top;
+      }
+      .scrap {
+        display: inline-block;
+        padding: 0.14em 0.16em 0.1em;
+        line-height: 1.05;
+        clip-path: polygon(
+          1% 6%, 8% 0, 22% 4%, 38% 0, 55% 5%, 70% 0, 86% 4%, 99% 0, 100% 35%,
+          97% 62%, 100% 92%, 90% 100%, 72% 96%, 55% 100%, 36% 96%, 20% 100%,
+          4% 96%, 0 70%, 3% 40%, 0 18%
+        );
+      }
+      .a .scrap {
+        font-family: "Anton Local", sans-serif;
+        font-weight: 400;
+      }
+      .p .scrap {
+        font-family: "Playfair Local", serif;
+        font-weight: 900;
+      }
+      .pi .scrap {
+        font-family: "Playfair Local", serif;
+        font-weight: 900;
+        font-style: italic;
+      }
+      .s .scrap {
+        font-family: "Special Elite Local", monospace;
+        font-weight: 400;
+      }
+      .k .scrap { background: var(--ink); color: var(--paper-light); }
+      .r .scrap { background: var(--red); color: var(--paper-light); }
+      .w .scrap { background: var(--paper-light); color: var(--ink); }
+      .o .scrap { background: var(--ochre); color: var(--ink); }
+      .b .scrap { background: var(--blue); color: var(--paper-light); }
+
+      /* Line under the cup */
+      #line {
+        position: absolute;
+        left: 90px;
+        top: 430px;
+        white-space: nowrap;
+        line-height: 1;
+        z-index: 20;
+      }
+      #line .row {
+        filter: drop-shadow(6px 8px 0 rgba(22, 19, 15, 0.45));
+        margin-bottom: 18px;
+      }
+      #line .row.r1 { font-size: 96px; }
+      #line .row.r2 { font-size: 80px; }
+      #line .sc {
+        display: inline-block;
+        vertical-align: top;
+      }
+      #line .sc .scrap {
+        padding: 0.12em 0.2em 0.08em;
+      }
+      #line .row.r1 .scrap { font-size: 1em; }
+
+      /* Logo name in the top-left, small */
+      #label {
+        position: absolute;
+        right: 64px;
+        bottom: 56px;
+        z-index: 30;
+        background: var(--ink);
+        color: var(--paper-light);
+        font-family: "Special Elite Local", monospace;
+        font-size: 34px;
+        line-height: 1;
+        padding: 12px 22px 10px;
+        white-space: nowrap;
+      }
+      #cup-svg {
+        position: absolute;
+        left: 1080px;
+        top: 170px;
+        width: 680px;
+        height: 680px;
+        overflow: visible;
+        z-index: 15;
+      }
+      #sun {
+        position: absolute;
+        left: 1155px;
+        top: 295px;
+        width: 530px;
+        height: 530px;
+        border-radius: 50%;
+        background: var(--ochre);
+        z-index: 10;
+      }
+      #band-wrap {
+        position: absolute;
+        left: 980px;
+        top: 900px;
+        width: 1100px;
+        height: 120px;
+        z-index: 4;
+      }
+      #band {
+        width: 100%;
+        height: 100%;
+        background: var(--blue);
+        transform: rotate(-14deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1920" data-height="1080">
+
+      <!-- paper ground -->
+      <svg class="grain" viewBox="0 0 1920 1080" aria-hidden="true">
+        <filter id="grain-f" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="7" stitchTiles="stitch" />
+          <feColorMatrix values="0 0 0 0 0.09  0 0 0 0 0.07  0 0 0 0 0.05  0 0 0 0.42 0" />
+        </filter>
+        <rect width="1920" height="1080" filter="url(#grain-f)" />
+      </svg>
+
+      <!-- background collage pieces -->
+      <div class="strip" id="strip-bl" data-layout-allow-overflow style="left:-30px; top:790px; width:780px; height:340px; transform: rotate(-3deg);">
+        <p>zum pa ta bu kak oi hop tzim</p>
+        <p>nein ka bu ZOOM pa ta hop krrr</p>
+        <p>oi ba ba tzim ka nein bu pa</p>
+        <p>krrr ta pa ZUM oi hop kak ba</p>
+      </div>
+      <div class="strip" id="strip-tr" style="left:1470px; top:34px; width:470px; height:150px; transform: rotate(6deg);">
+        <p style="font-size:22px">bu oi ZUM ka hop pa</p>
+        <p style="font-size:22px">tzim ta krrr nein ba</p>
+      </div>
+      <div id="band-wrap" data-layout-allow-overflow>
+        <div id="band"></div>
+      </div>
+      <div class="shape" style="left:1700px; top:600px; width:200px; height:200px; border-radius:50%; background: radial-gradient(circle, var(--ink) 34%, transparent 36%) 0 0 / 18px 18px; transform: rotate(8deg); opacity:0.9;"></div>
+      <div class="shape" style="left:1700px; top:800px; width:150px; height:110px; background: radial-gradient(circle, var(--ink) 34%, transparent 36%) 0 0 / 14px 14px; transform: rotate(-7deg);"></div>
+      <div class="shape" style="left:760px; top:118px; width:46px; height:46px; background:var(--ink); transform: rotate(14deg);"></div>
+      <div class="shape" style="left:640px; top:384px; width:40px; height:40px; background:var(--red); transform: rotate(-10deg);"></div>
+      <div class="shape" style="left:1040px; top:88px; width:36px; height:36px; background:var(--blue); transform: rotate(22deg);"></div>
+      <div class="shape" style="left:700px; top:905px; width:96px; height:62px; background:var(--kraft); transform: rotate(-6deg);"></div>
+      <div id="sun"></div>
+
+      <!-- the name -->
+      <div id="name" data-layout-allow-overlap aria-label="Lantern Bean"><span class="ch a r" data-r="-6" style="top:4px"><span class="scrap">L</span></span><span class="ch pi w" data-r="5" style="top:-6px"><span class="scrap">a</span></span><span class="ch s k" data-r="-3" style="top:6px"><span class="scrap">n</span></span><span class="ch pi o" data-r="8" style="top:-4px"><span class="scrap">t</span></span><span class="ch a b" data-r="-5" style="top:3px"><span class="scrap">e</span></span><span class="ch p r" data-r="4" style="top:-5px"><span class="scrap">r</span></span><span class="ch s w" data-r="-7" style="top:5px"><span class="scrap">n</span></span> <span class="ch pi k" data-r="6" style="top:-3px"><span class="scrap">B</span></span><span class="ch a r" data-r="-4" style="top:4px"><span class="scrap">e</span></span><span class="ch p o" data-r="3" style="top:-6px"><span class="scrap">a</span></span><span class="ch s b" data-r="-6" style="top:2px"><span class="scrap">n</span></span></div>
+
+      <!-- cup, drawn in SVG -->
+      <svg id="cup-svg" viewBox="0 0 600 600" aria-label="A coffee cup">
+        <defs>
+          <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+            <circle cx="8" cy="8" r="4.5" fill="#16130f" />
+          </pattern>
+          <clipPath id="body-clip">
+            <path d="M140 250 L460 250 C460 380 400 480 300 480 C200 480 140 380 140 250 Z" />
+          </clipPath>
+        </defs>
+        <g id="saucer">
+          <ellipse cx="300" cy="500" rx="250" ry="46" fill="#16130f" />
+          <ellipse cx="300" cy="494" rx="150" ry="18" fill="#d3261c" />
+        </g>
+        <g id="cup">
+          <path d="M432 272 C528 236 562 330 522 382 C498 414 462 402 448 374" fill="none" stroke="#16130f" stroke-width="36" stroke-linecap="round" />
+          <path d="M140 250 L460 250 C460 380 400 480 300 480 C200 480 140 380 140 250 Z" fill="#d3261c" stroke="#16130f" stroke-width="10" stroke-linejoin="round" />
+          <g clip-path="url(#body-clip)">
+            <path d="M398 250 L470 250 L470 490 L330 490 C370 440 396 380 398 250 Z" fill="url(#dots)" opacity="0.9" />
+            <path d="M120 318 Q300 340 480 318 L480 352 Q300 372 120 352 Z" fill="#f4eee0" stroke="#16130f" stroke-width="6" />
+          </g>
+          <ellipse cx="300" cy="250" rx="160" ry="28" fill="#d9a72b" stroke="#16130f" stroke-width="10" />
+          <ellipse cx="300" cy="252" rx="130" ry="15" fill="#16130f" />
+        </g>
+        <g id="steam" fill="none" stroke="#16130f" stroke-width="14" stroke-linecap="round">
+          <path pathLength="1" style="stroke-dasharray:1; stroke-dashoffset:1" d="M236 212 C212 178 258 156 236 124 C218 98 252 78 240 50" />
+          <path pathLength="1" style="stroke-dasharray:1; stroke-dashoffset:1" d="M300 206 C277 172 323 146 301 114 C283 88 317 68 306 40" />
+          <path pathLength="1" style="stroke-dasharray:1; stroke-dashoffset:1" d="M364 212 C341 178 387 156 365 124 C347 98 381 78 370 50" />
+        </g>
+      </svg>
+
+      <!-- the line -->
+      <div id="line" aria-label="Fresh coffee, every morning">
+        <div class="row r1" data-layout-allow-overlap><span class="sc k pi" data-r="-4"><span class="scrap">Fresh</span></span> <span class="sc w p" data-r="3"><span class="scrap">coffee,</span></span> </div>
+        <div class="row r2" data-layout-allow-overlap><span class="sc r s" data-r="5"><span class="scrap">every</span></span> <span class="sc o s" data-r="-3"><span class="scrap">morning</span></span> </div>
+      </div>
+
+      <div id="label">Dada</div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      function build() {
+        const nm = document.getElementById("name");
+        const W = nm.offsetWidth;
+        const H = nm.offsetHeight;
+        const HERO = 1.6;
+        const X0 = (1920 - W * HERO) / 2;
+        const Y0 = (1080 - H * HERO) / 2;
+        gsap.set(nm, { x: X0, y: Y0, scale: HERO });
+
+        const chars = gsap.utils.toArray("#name .ch");
+        const rot = (i) => parseFloat(chars[i].dataset.r);
+        tl.fromTo(
+          chars,
+          { opacity: 0, y: -150, rotation: (i) => rot(i) - 35 },
+          { opacity: 1, y: 0, rotation: (i) => rot(i), duration: 0.5, ease: "back.out(1.7)", stagger: 0.045 },
+          0
+        );
+        tl.to("#name", { x: 90, y: 70, scale: 0.6, duration: 1.0, ease: "power3.inOut" }, 1.8);
+
+        tl.fromTo("#sun", { scale: 0 }, { scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 1.5);
+
+        tl.fromTo("#saucer", { y: 90, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 1.9);
+        tl.fromTo("#cup", { y: -140, opacity: 0, rotation: -10, transformOrigin: "50% 50%" }, { y: 0, opacity: 1, rotation: 0, duration: 0.6, ease: "back.out(1.2)" }, 2.0);
+        tl.fromTo(
+          "#steam path",
+          { strokeDashoffset: 1 },
+          { strokeDashoffset: 0, duration: 0.4, stagger: 0.06, ease: "power1.out" },
+          2.25
+        );
+
+        const words = gsap.utils.toArray("#line .sc");
+        const wr = (i) => parseFloat(words[i].dataset.r);
+        tl.fromTo(
+          words,
+          { opacity: 0, scale: 0.4, y: 40, rotation: (i) => wr(i) - 20 },
+          { opacity: 1, scale: 1, y: 0, rotation: (i) => wr(i), duration: 0.35, ease: "back.out(1.6)", stagger: 0.09 },
+          2.0
+        );
+
+        // gentle movement, 2.8 s to 5.0 s, all finite and yoyo'd back to rest
+        tl.to("#cup", { y: -12, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+        tl.to("#steam", { y: -14, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+        tl.to(words, { rotation: (i) => wr(i) + 1.2, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+        tl.to("#band-wrap", { x: 30, duration: 5, ease: "none" }, 0);
+        tl.fromTo("#label", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 0.2);
+      }
+
+      const loads = [
+        document.fonts.load('400 100px "Anton Local"'),
+        document.fonts.load('900 100px "Playfair Local"'),
+        document.fonts.load('italic 900 100px "Playfair Local"'),
+        document.fonts.load('400 100px "Special Elite Local"'),
+      ];
+      Promise.allSettled(loads).then(() => {
+        build();
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      });
+    </script>
+  </body>
+</html>

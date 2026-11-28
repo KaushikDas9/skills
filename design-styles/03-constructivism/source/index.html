@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Oswald Local";
+        src: url("assets/oswald-latin-700.woff2") format("woff2");
+        font-weight: 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Oswald Local";
+        src: url("assets/oswald-latin-500.woff2") format("woff2");
+        font-weight: 500;
+        font-style: normal;
+      }
+      :root {
+        --paper: #ece4d2;
+        --ink: #161412;
+        --red: #d3261c;
+        --grey: #8f897d;
+        --light: #f6f1e6;
+        --font-display: "Oswald Local", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      .full {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+      .line {
+        position: absolute;
+        white-space: nowrap;
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+      #hero {
+        left: 96px;
+        top: 292px;
+        font-size: 250px;
+      }
+      #wipe-a,
+      #wipe-b {
+        background: var(--red);
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+      #wipe-a,
+      #wipe-b {
+        position: absolute;
+      }
+      .block {
+        position: absolute;
+        background: var(--ink);
+      }
+      .red-block {
+        position: absolute;
+        background: var(--red);
+      }
+      #tag {
+        position: absolute;
+        left: 60px;
+        top: 996px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 500;
+        font-size: 28px;
+        letter-spacing: 0.08em;
+        line-height: 1;
+        color: var(--ink);
+      }
+      #tag-mark {
+        width: 18px;
+        height: 18px;
+        background: var(--red);
+      }
+      .scene-text {
+        position: absolute;
+        white-space: nowrap;
+        font-weight: 700;
+        line-height: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Scene 1: name hero, 0.0 - 1.6 s -->
+      <div id="scene-hero" class="clip" data-start="0" data-duration="1.6" data-track-index="0">
+        <svg class="full" viewBox="0 0 1920 1080" aria-hidden="true">
+          <circle id="hero-disc" cx="1700" cy="860" r="0" fill="#161412" />
+          <g transform="rotate(-30 1700 860)">
+            <rect id="hero-bar" x="400" y="800" width="2600" height="120" fill="#d3261c" />
+          </g>
+          <rect id="hero-rule" x="96" y="610" width="1040" height="22" fill="#161412" />
+        </svg>
+        <div id="hero" class="line">Lantern Bean</div>
+      </div>
+
+      <!-- Scene 2: cup and line, 1.6 - 3.4 s -->
+      <div id="scene-cup" class="clip" data-start="1.6" data-duration="1.8" data-track-index="0">
+        <svg class="full" viewBox="0 0 1920 1080" aria-hidden="true">
+          <circle id="cup-disc" cx="560" cy="540" r="0" fill="#d3261c" />
+          <g id="cup-anim">
+            <g transform="translate(0,60)">
+              <rect id="saucer" x="370" y="598" width="380" height="24" fill="#161412" />
+              <path id="cup-handle" d="M 672 440 H 735 V 540 H 660" fill="none" stroke="#161412" stroke-width="28" />
+              <polygon id="cup-body" points="430,400 690,400 650,600 470,600" fill="#161412" />
+              <polygon id="cup-band" points="440,450 680,450 672,490 448,490" fill="#d3261c" />
+              <rect id="steam-a" x="489" y="300" width="22" height="70" fill="#161412" />
+              <rect id="steam-b" x="549" y="300" width="22" height="70" fill="#161412" />
+              <rect id="steam-c" x="609" y="300" width="22" height="70" fill="#161412" />
+            </g>
+          </g>
+        </svg>
+        <div id="cup-line-a" class="scene-text" style="left: 1000px; top: 330px; font-size: 128px">Fresh coffee,</div>
+        <div id="cup-line-b" class="scene-text" style="left: 1000px; top: 480px; font-size: 128px">every morning</div>
+        <div id="cup-rule" class="block" style="left: 1000px; top: 660px; width: 780px; height: 22px"></div>
+      </div>
+
+      <!-- Scene 3: closing line, 3.4 - 5.0 s -->
+      <div id="scene-close" class="clip" data-start="3.4" data-duration="1.6" data-track-index="0">
+        <svg class="full" viewBox="0 0 1920 1080" aria-hidden="true">
+          <rect id="panel" x="960" y="0" width="960" height="1080" fill="#161412" />
+          <polygon id="panel-wedge" points="960,0 1500,0 960,600" fill="#d3261c" />
+        </svg>
+        <div id="come-a" class="scene-text" style="left: 96px; top: 300px; font-size: 180px">Come in,</div>
+        <div id="come-b" class="scene-text" style="left: 96px; top: 480px; font-size: 180px">warm up.</div>
+        <div id="come-name" class="scene-text" style="left: 1040px; top: 700px; font-size: 96px; color: var(--light)">Lantern Bean</div>
+      </div>
+
+      <!-- Style label, whole video -->
+      <div id="tag" class="clip" data-start="0" data-duration="5" data-track-index="1">
+        <div id="tag-mark"></div>
+        <span>Constructivism</span>
+      </div>
+
+      <!-- Hard-edged red wipes between scenes -->
+      <div id="wipe-clip-a" class="clip" data-start="1.4" data-duration="0.3" data-track-index="2">
+        <div id="wipe-a"></div>
+      </div>
+      <div id="wipe-clip-b" class="clip" data-start="3.2" data-duration="0.3" data-track-index="2">
+        <div id="wipe-b"></div>
+      </div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1: name hero
+      tl.fromTo("#hero-disc", { attr: { r: 0 } }, { attr: { r: 230 }, duration: 0.42, ease: "power4.out" }, 0.05);
+      tl.fromTo("#hero-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out", transformOrigin: "0% 50%" }, 0.18);
+      tl.fromTo("#hero-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power3.out", transformOrigin: "0% 50%" }, 0.3);
+      tl.fromTo("#hero", { y: 70, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out" }, 0.15);
+
+      // Wipe to scene 2
+      tl.fromTo("#wipe-a", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.12, ease: "power3.in" }, 1.4);
+      tl.set("#wipe-a", { transformOrigin: "100% 50%" }, 1.52);
+      tl.to("#wipe-a", { scaleX: 0, duration: 0.12, ease: "power3.out" }, 1.52);
+
+      // Scene 2: cup and line
+      tl.fromTo("#cup-disc", { attr: { r: 0 } }, { attr: { r: 330 }, duration: 0.36, ease: "power4.out" }, 1.68);
+      tl.fromTo("#saucer", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 1.8);
+      tl.fromTo("#cup-anim", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "expo.out" }, 1.85);
+      tl.fromTo(["#steam-a", "#steam-b", "#steam-c"], { scaleY: 0 }, { scaleY: 1, duration: 0.3, ease: "power3.out", stagger: 0.07, transformOrigin: "50% 100%" }, 2.2);
+      tl.fromTo("#cup-line-a", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, 2.0);
+      tl.fromTo("#cup-line-b", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, 2.2);
+      tl.fromTo("#cup-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power3.out", transformOrigin: "0% 50%" }, 2.4);
+
+      // Wipe to scene 3
+      tl.fromTo("#wipe-b", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.12, ease: "power3.in" }, 3.2);
+      tl.set("#wipe-b", { transformOrigin: "100% 50%" }, 3.32);
+      tl.to("#wipe-b", { scaleX: 0, duration: 0.12, ease: "power3.out" }, 3.32);
+
+      // Scene 3: closing line
+      tl.fromTo("#panel", { x: 960 }, { x: 0, duration: 0.4, ease: "power4.out" }, 3.5);
+      tl.fromTo("#panel-wedge", { x: -300, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 3.6);
+      tl.fromTo("#come-a", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, 3.6);
+      tl.fromTo("#come-b", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, 3.75);
+      tl.fromTo("#come-name", { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, 3.95);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Lantern Bean - Art Nouveau</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Cinzel Deco";
+        src: url("assets/fonts/CinzelDecorative-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Cinzel Deco";
+        src: url("assets/fonts/CinzelDecorative-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Cormorant Italic";
+        src: url("assets/fonts/CormorantGaramond-Italic.ttf") format("truetype");
+        font-weight: 300 700;
+        font-style: italic;
+      }
+      :root {
+        --cream: #efe6cf;
+        --olive: #4e5a34;
+        --sage: #7f8f5e;
+        --gold: #c49a4a;
+        --plum: #6b3a4a;
+        --bronze: #6e4e26;
+        --ink: #2e2a1f;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--cream);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: radial-gradient(ellipse at 50% 45%, #f6efdc 0%, #efe6cf 58%, #e3d4b2 100%);
+      }
+      .frame {
+        position: absolute;
+        left: 36px;
+        top: 36px;
+        width: 1848px;
+        height: 1008px;
+        border: 2px solid rgba(78, 90, 52, 0.55);
+        border-radius: 28px;
+        box-sizing: border-box;
+        pointer-events: none;
+      }
+      #stage-svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: visible;
+      }
+      #label {
+        position: absolute;
+        left: 84px;
+        top: 80px;
+        font-family: "Cinzel Deco", serif;
+        font-weight: 400;
+        font-size: 28px;
+        letter-spacing: 0.14em;
+        color: var(--plum);
+        margin: 0;
+      }
+      #hero {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: "Cinzel Deco", serif;
+        font-weight: 700;
+        color: var(--plum);
+        text-align: center;
+      }
+      .hero-line {
+        display: block;
+        font-size: 232px;
+        line-height: 0.98;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+      }
+      #name {
+        position: absolute;
+        left: 170px;
+        top: 330px;
+        margin: 0;
+        font-family: "Cinzel Deco", serif;
+        font-weight: 700;
+        font-size: 74px;
+        line-height: 1;
+        color: var(--plum);
+        white-space: nowrap;
+      }
+      #tagline {
+        position: absolute;
+        left: 170px;
+        top: 470px;
+        margin: 0;
+        font-family: "Cormorant Italic", serif;
+        font-style: italic;
+        font-weight: 500;
+        font-size: 112px;
+        line-height: 1.02;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #tagline span {
+        display: block;
+      }
+      #cup {
+        position: absolute;
+        left: 1150px;
+        top: 262px;
+        width: 600px;
+        height: 520px;
+        overflow: visible;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div class="frame"></div>
+
+      <div id="stage">
+        <svg id="stage-svg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+          <circle id="halo-hero" cx="960" cy="540" r="352" fill="#e6cf97" opacity="0.6" />
+          <circle
+            id="halo-hero-ring"
+            cx="960"
+            cy="540"
+            r="352"
+            fill="none"
+            stroke="#c49a4a"
+            stroke-width="3"
+            opacity="0.9"
+          />
+          <circle
+            id="halo-hero-ring2"
+            cx="960"
+            cy="540"
+            r="332"
+            fill="none"
+            stroke="#c49a4a"
+            stroke-width="1.5"
+            opacity="0.7"
+          />
+          <circle id="halo-cup" cx="1450" cy="530" r="372" fill="#e6cf97" opacity="0" />
+          <circle
+            id="halo-cup-ring"
+            cx="1450"
+            cy="530"
+            r="372"
+            fill="none"
+            stroke="#c49a4a"
+            stroke-width="3"
+            opacity="0"
+          />
+          <g id="vineL"></g>
+          <g id="vineR" transform="translate(1920 0) scale(-1 1)"></g>
+          <g id="divider"></g>
+        </svg>
+
+        <div id="label">Art Nouveau</div>
+
+        <div id="hero">
+          <span class="hero-line" id="hero-l1">Lantern</span>
+          <span class="hero-line" id="hero-l2">Bean</span>
+        </div>
+
+        <h1 id="name">Lantern Bean</h1>
+
+        <p id="tagline">
+          <span id="line1">Fresh coffee,</span>
+          <span id="line2">every morning</span>
+        </p>
+
+        <svg id="cup" viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg" aria-label="Coffee cup">
+          <!-- saucer -->
+          <ellipse cx="300" cy="478" rx="250" ry="34" fill="#c49a4a" stroke="#4e5a34" stroke-width="5" />
+          <ellipse cx="300" cy="472" rx="196" ry="20" fill="#e6cf97" stroke="#4e5a34" stroke-width="2.5" />
+          <!-- handle (drawn first so the body covers its ends) -->
+          <path
+            d="M444 276 C 572 246 600 384 440 386"
+            fill="none"
+            stroke="#4e5a34"
+            stroke-width="30"
+            stroke-linecap="round"
+          />
+          <path
+            d="M444 276 C 572 246 600 384 440 386"
+            fill="none"
+            stroke="#efe6cf"
+            stroke-width="10"
+            stroke-linecap="round"
+            opacity="0.55"
+          />
+          <!-- body -->
+          <path
+            d="M146 246 L454 246 C 454 392 392 448 300 448 C 208 448 146 392 146 246 Z"
+            fill="#fbf4e0"
+            stroke="#4e5a34"
+            stroke-width="7"
+            stroke-linejoin="round"
+          />
+          <!-- gold band -->
+          <path
+            d="M150 318 Q 300 350 450 318 L 447 340 Q 300 372 153 340 Z"
+            fill="#c49a4a"
+            stroke="#4e5a34"
+            stroke-width="2.5"
+          />
+          <path d="M150 276 Q 300 296 450 276" fill="none" stroke="#6b3a4a" stroke-width="3" opacity="0.8" />
+          <!-- coffee surface -->
+          <ellipse cx="300" cy="246" rx="154" ry="28" fill="#4e5a34" stroke="#4e5a34" stroke-width="6" />
+          <ellipse cx="300" cy="248" rx="138" ry="19" fill="#6e4e26" />
+          <!-- steam: curled vine strokes above the mouth -->
+          <g id="steam">
+            <path
+              class="steam"
+              pathLength="100"
+              stroke-dasharray="100 120"
+              stroke-dashoffset="110"
+              d="M236 214 C 196 176 268 142 238 100 C 220 74 250 52 234 24"
+              fill="none"
+              stroke="#7f8f5e"
+              stroke-width="9"
+              stroke-linecap="round"
+            />
+            <path
+              class="steam"
+              pathLength="100"
+              stroke-dasharray="100 120"
+              stroke-dashoffset="110"
+              d="M300 206 C 262 168 334 134 302 92 C 286 68 314 46 300 14"
+              fill="none"
+              stroke="#7f8f5e"
+              stroke-width="9"
+              stroke-linecap="round"
+            />
+            <path
+              class="steam"
+              pathLength="100"
+              stroke-dasharray="100 120"
+              stroke-dashoffset="110"
+              d="M364 214 C 326 176 398 142 368 100 C 352 76 380 54 366 26"
+              fill="none"
+              stroke="#7f8f5e"
+              stroke-width="9"
+              stroke-linecap="round"
+            />
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <script>
+      const NS = "http://www.w3.org/2000/svg";
+      const f = (v) => v.toFixed(2);
+
+      // Whiplash vine: centreline curvature k(s) = a + b*s^6 (s runs root to tip).
+      // Heading is th(s) = th0 + a*s + b*s^7/7, so the vine stays smooth and deterministic.
+      // The tip is a point and the width tapers from w0 at the root to w1 at the tip.
+      // It is built as small filled quads, each shown or hidden by a timeline set().
+      function buildVine(parent, o) {
+        const N = o.n;
+        const cen = [];
+        let x = o.x0;
+        let y = o.y0;
+        const th = (s) => o.th0 + o.a * s + (o.b * Math.pow(s, 7)) / 7;
+        cen.push({ x, y, t: th(0) });
+        for (let i = 0; i < N; i++) {
+          const sm = (i + 0.5) / N;
+          x += (Math.cos(th(sm)) * o.L) / N;
+          y += (Math.sin(th(sm)) * o.L) / N;
+          cen.push({ x, y, t: th((i + 1) / N) });
+        }
+        const w = (s) => o.w0 + (o.w1 - o.w0) * Math.pow(s, 0.8);
+        const segs = [];
+        const mk = (color, scale, extraStroke) => {
+          for (let i = 0; i < N; i++) {
+            const A = cen[i];
+            const B = cen[i + 1];
+            const wA = w(i / N) * scale;
+            const wB = w((i + 1) / N) * scale;
+            const nA = [-Math.sin(A.t), Math.cos(A.t)];
+            const nB = [-Math.sin(B.t), Math.cos(B.t)];
+            const d =
+              `M${f(A.x + (nA[0] * wA) / 2)} ${f(A.y + (nA[1] * wA) / 2)} ` +
+              `L${f(B.x + (nB[0] * wB) / 2)} ${f(B.y + (nB[1] * wB) / 2)} ` +
+              `L${f(B.x - (nB[0] * wB) / 2)} ${f(B.y - (nB[1] * wB) / 2)} ` +
+              `L${f(A.x - (nA[0] * wA) / 2)} ${f(A.y - (nA[1] * wA) / 2)} Z`;
+            const p = document.createElementNS(NS, "path");
+            p.setAttribute("d", d);
+            p.setAttribute("fill", color);
+            p.setAttribute("stroke", color);
+            p.setAttribute("stroke-width", extraStroke);
+            p.setAttribute("stroke-linejoin", "round");
+            p.style.opacity = "0";
+            parent.appendChild(p);
+            segs.push(p);
+          }
+        };
+        mk("#4e5a34", 1, 1.2);
+        mk("#c49a4a", 0.28, 0.6);
+        return segs;
+      }
+
+      // Hero arches: two vines rising from the bottom edge and curling in over the title.
+      const vineL = buildVine(document.getElementById("vineL"), {
+        x0: 220, y0: 1090, th0: -Math.PI / 2, L: 900, a: 0, b: 12, w0: 17, w1: 1.6, n: 64,
+      });
+      const vineR = buildVine(document.getElementById("vineR"), {
+        x0: 220, y0: 1090, th0: -Math.PI / 2, L: 900, a: 0, b: 12, w0: 17, w1: 1.6, n: 64,
+      });
+      // Short divider vine that curls at the end, drawn under the name.
+      const divider = buildVine(document.getElementById("divider"), {
+        x0: 176, y0: 444, th0: 0, L: 300, a: 0, b: -6, w0: 9, w1: 1, n: 40,
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Start hidden, then the timeline turns segments on and off in order.
+      gsap.set([...vineL, ...vineR, ...divider], { opacity: 0 });
+
+      // Hero: vines grow in from 0.1 s to 1.5 s, tip-first retracts from 1.6 s.
+      tl.fromTo(
+        "#hero-l1",
+        { y: 44, opacity: 0.15 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
+        0,
+      );
+      tl.fromTo(
+        "#hero-l2",
+        { y: 44, opacity: 0.15 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
+        0.16,
+      );
+      tl.fromTo("#label", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, 0);
+      tl.fromTo("#halo-hero", { opacity: 0 }, { opacity: 0.6, duration: 0.6, ease: "power1.out" }, 0);
+      tl.fromTo("#halo-hero-ring", { opacity: 0 }, { opacity: 0.9, duration: 0.6, ease: "power1.out" }, 0.1);
+      tl.fromTo("#halo-hero-ring2", { opacity: 0 }, { opacity: 0.7, duration: 0.6, ease: "power1.out" }, 0.2);
+
+      const growStart = 0.1;
+      const growDur = 1.4;
+      [vineL, vineR].forEach((segs) =>
+        segs.forEach((el, i) => tl.set(el, { opacity: 1 }, growStart + (i * growDur) / segs.length)),
+      );
+      const retractStart = 1.6;
+      const retractDur = 0.6;
+      [vineL, vineR].forEach((segs) =>
+        segs.forEach((el, i) =>
+          tl.set(el, { opacity: 0 }, retractStart + ((segs.length - 1 - i) * retractDur) / segs.length),
+        ),
+      );
+
+      // Hero leaves: text and halo fade up and out before the cup arrives.
+      tl.to("#hero", { opacity: 0, y: -26, duration: 0.45, ease: "power2.in" }, 1.6);
+      tl.to("#halo-hero, #halo-hero-ring, #halo-hero-ring2", { opacity: 0, duration: 0.4, ease: "power2.in" }, 1.7);
+
+      // Cup and smaller name arrive by 2.8 s.
+      tl.fromTo("#cup", { opacity: 0, y: 44, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: "power3.out", transformOrigin: "50% 92%" }, 1.8);
+      tl.fromTo("#halo-cup", { opacity: 0 }, { opacity: 0.6, duration: 0.7, ease: "power1.out" }, 1.9);
+      tl.fromTo("#halo-cup-ring", { opacity: 0 }, { opacity: 0.9, duration: 0.7, ease: "power1.out" }, 2.0);
+      tl.fromTo("#name", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, 2.0);
+      tl.fromTo("#line1", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, 2.1);
+      tl.fromTo("#line2", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, 2.3);
+      tl.fromTo(
+        ".steam",
+        { strokeDashoffset: 110 },
+        { strokeDashoffset: 0, duration: 0.8, ease: "sine.inOut", stagger: 0.08 },
+        2.3,
+      );
+
+      const dividerStart = 2.45;
+      divider.forEach((el, i) => tl.set(el, { opacity: 1 }, dividerStart + (i * 0.4) / divider.length));
+
+      // Hold 2.8 to 5.0 s: gentle bob of the cup and a sway of the steam.
+      tl.to("#cup", { y: -9, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+      tl.to(".steam", { x: 5, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Anton Local";
+        src: url("assets/Anton-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Jost Local";
+        src: url("assets/Jost.ttf") format("truetype");
+        font-weight: 100 900;
+        font-style: normal;
+      }
+      :root {
+        --paper: #fbf3e3;
+        --tomato: #f2542d;
+        --sun: #ffc62e;
+        --pink: #f57aa8;
+        --turq: #1fb3a6;
+        --cobalt: #2f6bd8;
+        --ink: #1e1b19;
+        --shadow: #3a1c0c;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      .layer {
+        position: absolute;
+        inset: 0;
+      }
+      #art {
+        display: block;
+        overflow: visible;
+      }
+      #hero-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #hero {
+        font-family: "Anton Local", sans-serif;
+        font-weight: 400;
+        font-size: 236px;
+        line-height: 1;
+        white-space: nowrap;
+        letter-spacing: 0.01em;
+      }
+      #hero .word.ink {
+        color: var(--ink);
+      }
+      #hero .word.tom {
+        color: var(--tomato);
+      }
+      .ch {
+        display: inline-block;
+        will-change: transform;
+      }
+      #label {
+        position: absolute;
+        left: 64px;
+        top: 56px;
+        font-family: "Jost Local", sans-serif;
+        font-weight: 500;
+        font-size: 28px;
+        line-height: 1;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #copy {
+        position: absolute;
+        left: 1000px;
+        top: 370px;
+        width: 780px;
+      }
+      #copy .line {
+        font-family: "Jost Local", sans-serif;
+        font-weight: 600;
+        font-size: 98px;
+        line-height: 1.04;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+      }
+      #copy .ln {
+        display: block;
+        white-space: nowrap;
+      }
+      #rule {
+        width: 170px;
+        height: 16px;
+        margin-top: 34px;
+        background: var(--tomato);
+      }
+      #name {
+        margin-top: 30px;
+        font-family: "Anton Local", sans-serif;
+        font-size: 66px;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        color: var(--cobalt);
+        white-space: nowrap;
+      }
+      .steam {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 11;
+        stroke-linecap: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Paper shapes and the cup: one SVG layer, cut-paper edge filters, height shadows -->
+      <div id="art-layer" class="layer clip" data-start="0" data-duration="5" data-track-index="0">
+        <svg id="art" width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Scissor edge: displacement of about 1.5 px at roughly 50 px wavelength -->
+            <filter id="cutRest" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+              <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="7" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" result="cut" />
+              <!-- Resting sheet, h = 4: offset (2, 4), blur 0.4h, opacity 0.3 - 0.004h -->
+              <feDropShadow in="cut" dx="2" dy="4" stdDeviation="1.6" flood-color="#3a1c0c" flood-opacity="0.28" />
+            </filter>
+            <filter id="cutLift" x="-30%" y="-30%" width="170%" height="170%" color-interpolation-filters="sRGB">
+              <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="7" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" result="cut" />
+              <!-- Lifted sheet, h = 14: offset (7, 14), blur 5.6, opacity 0.244 -->
+              <feDropShadow in="cut" dx="7" dy="14" stdDeviation="5.6" flood-color="#3a1c0c" flood-opacity="0.24" />
+            </filter>
+          </defs>
+
+          <!-- Sun -->
+          <circle id="sun" cx="1640" cy="180" r="200" fill="#ffc62e" filter="url(#cutRest)" />
+
+          <!-- Kidney -->
+          <g id="kidneyG">
+            <path
+              id="kidney"
+              d="M 90 820 C 150 740 300 760 350 840 C 380 890 340 960 280 970 C 230 978 210 930 170 930 C 120 930 70 900 90 820 Z"
+              fill="#f57aa8"
+              filter="url(#cutRest)"
+            />
+          </g>
+
+          <!-- Ball-and-stick atom, six spokes -->
+          <g id="atom">
+            <g stroke="#1e1b19" stroke-width="9" stroke-linecap="round" filter="url(#cutRest)">
+              <line x1="1700" y1="860" x2="1700" y2="740" />
+              <line x1="1700" y1="860" x2="1804" y2="800" />
+              <line x1="1700" y1="860" x2="1804" y2="920" />
+              <line x1="1700" y1="860" x2="1700" y2="980" />
+              <line x1="1700" y1="860" x2="1596" y2="920" />
+              <line x1="1700" y1="860" x2="1596" y2="800" />
+            </g>
+            <g filter="url(#cutRest)">
+              <circle cx="1700" cy="740" r="26" fill="#1fb3a6" />
+              <circle cx="1804" cy="800" r="26" fill="#2f6bd8" />
+              <circle cx="1804" cy="920" r="26" fill="#f57aa8" />
+              <circle cx="1700" cy="980" r="26" fill="#f2542d" />
+              <circle cx="1596" cy="920" r="26" fill="#ffc62e" />
+              <circle cx="1596" cy="800" r="26" fill="#1fb3a6" />
+              <circle cx="1700" cy="860" r="40" fill="#1e1b19" />
+            </g>
+          </g>
+
+          <!-- Cup: one assembled object, scaled as a unit -->
+          <g id="cupFloat">
+            <!-- Saucer, centred under the cup -->
+            <ellipse id="saucer" cx="560" cy="706" rx="258" ry="46" fill="#2f6bd8" filter="url(#cutRest)" />
+            <!-- Handle, starts inside the body edge so it reads as attached -->
+            <path
+              id="handle"
+              d="M 690 520 C 800 490 830 650 690 655"
+              fill="none"
+              stroke="#1fb3a6"
+              stroke-width="36"
+              filter="url(#cutRest)"
+            />
+            <!-- Body with lifted shadow; the dot overprints the body (multiply) -->
+            <g filter="url(#cutLift)">
+              <path
+                id="body"
+                d="M 396 470 L 724 470 C 724 610 672 700 560 700 C 448 700 396 610 396 470 Z"
+                fill="#f2542d"
+              />
+              <circle id="dot" cx="560" cy="600" r="34" fill="#ffc62e" style="mix-blend-mode: multiply" />
+            </g>
+            <!-- Coffee surface at the mouth -->
+            <ellipse id="mouth" cx="560" cy="470" rx="164" ry="26" fill="#3a1c0c" />
+            <!-- Steam above the mouth -->
+            <path class="steam" id="steamA" pathLength="1" d="M 470 410 C 440 370 500 340 470 290" />
+            <path class="steam" id="steamB" pathLength="1" d="M 560 400 C 530 360 590 330 560 270" />
+            <path class="steam" id="steamC" pathLength="1" d="M 650 410 C 620 370 680 340 650 290" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Hero: the shop name -->
+      <div id="hero-wrap" class="layer clip" data-start="0" data-duration="1.9" data-track-index="1">
+        <h1 id="hero"><span class="word ink">Lantern</span> <span class="word tom">Bean</span></h1>
+      </div>
+
+      <!-- Supporting copy -->
+      <div id="copy" class="clip" data-start="1.8" data-duration="3.2" data-track-index="2">
+        <p class="line">
+          <span class="ln">Fresh coffee,</span>
+          <span class="ln">every morning</span>
+        </p>
+        <div id="rule"></div>
+        <p id="name">Lantern Bean</p>
+      </div>
+
+      <!-- Style label -->
+      <div id="label" class="clip" data-start="0" data-duration="5" data-track-index="3">Mid-Century Modern</div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Transform origins for every shape GSAP moves or scales
+      gsap.set(["#sun", "#saucer", "#handle", "#mouth", "#dot", "#atom", "#body"], {
+        transformOrigin: "50% 50%",
+      });
+      gsap.set("#rule", { transformOrigin: "0% 50%" });
+      gsap.set(".steam", { strokeDashoffset: 1 });
+      // Cup is scaled as one unit, about its own centre
+      gsap.set("#cupFloat", { scale: 1.15, transformOrigin: "50% 50%" });
+
+      // Split the hero name into letters for a stagger
+      const hero = document.getElementById("hero");
+      hero.querySelectorAll(".word").forEach((word) => {
+        const text = word.textContent;
+        word.textContent = "";
+        for (const ch of text) {
+          const s = document.createElement("span");
+          s.className = "ch";
+          s.textContent = ch;
+          word.appendChild(s);
+        }
+      });
+      const letters = hero.querySelectorAll(".ch");
+
+      // 0.0 - 1.8 s: the hero and the background paper shapes
+      tl.fromTo("#sun", { scale: 0.2 }, { scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 0);
+      tl.fromTo("#kidneyG", { x: -200 }, { x: 0, duration: 0.8, ease: "power3.out" }, 0.05);
+      tl.fromTo("#atom", { scale: 0 }, { scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 0.3);
+      tl.fromTo(
+        letters,
+        { y: 80, opacity: 0, rotation: 8 },
+        { y: 0, opacity: 1, rotation: 0, duration: 0.55, stagger: 0.045, ease: "power3.out" },
+        0
+      );
+      tl.to(letters, { y: -60, opacity: 0, duration: 0.22, stagger: 0.015, ease: "power2.in" }, 1.45);
+
+      // 1.8 - 2.8 s: the cup assembles and the copy arrives
+      tl.fromTo("#saucer", { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(1.2)" }, 1.8);
+      tl.fromTo("#cupFloat", { y: -90, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 2.0);
+      tl.fromTo("#handle", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 2.2);
+      tl.fromTo("#mouth", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, 2.35);
+      tl.fromTo("#dot", { scale: 0 }, { scale: 1, duration: 0.35, ease: "back.out(2)" }, 2.45);
+      tl.fromTo(".steam", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.35, stagger: 0.07, ease: "power2.out" }, 2.3);
+      tl.fromTo("#rule", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power3.out" }, 2.3);
+      tl.fromTo("#copy .ln", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power3.out" }, 2.1);
+      tl.fromTo("#name", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }, 2.4);
+
+      // 2.8 - 5.0 s: gentle movement only
+      tl.to("#cupFloat", { y: -8, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, 2.8);
+      tl.to(".steam", { y: -6, duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.15 }, 2.8);
+      tl.to("#atom", { rotation: 60, duration: 2.2, ease: "sine.inOut" }, 2.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
