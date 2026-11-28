@@ -8,6 +8,12 @@ My collection of skills for Claude Code. Each skill is one folder in `skills/`.
 |---|---|
 | [resilience-check](skills/resilience-check) | Checks if your app survives failures (timeouts, retries, double charges, dead cache, crashes) and writes a plain-language report with fixes. |
 
+### Motion design styles
+
+| Skill | What it does |
+|---|---|
+| [papercraft](skills/papercraft) | Paper pop-up style for videos, games and web pages. |
+
 More skills will be added here.
 
 ## Install one skill
@@ -44,4 +50,4 @@ skills/
 
 ## License
 
-MIT
+MIT. A skill folder with its own `LICENSE` file is covered by that file.
